@@ -12,10 +12,13 @@ namespace Sieve.NET.Core.Tests
 
     using Xunit;
 
-    // TODO: Given property type, if string is entered, convert it to that property type
     // TODO: Option to throw an error if an "acceptable value" isn't parseable
-    // TODO: Multiple acceptable values as an OR statement
     // TODO: Default separator
+    //todo: SieveDefinition vs. Sieve
+    // todo: get sieve via GetSieveFor(acceptablevalues)
+    //todo: don't allow a sieve to be created except from a SieveDefinition?
+    //todo if calling any sieve method when acceptableValues haven't been passed in at all, throw exception
+    // TODO no sieve type throws error
     // TODO: Custom separator
 
     public class EqualityFilterTests
@@ -27,7 +30,7 @@ namespace Sieve.NET.Core.Tests
             {
                 var itemToTest = new ABusinessObject { AnInt = 3 };
 
-                var filter = new Sieve<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, 3);
+                var filter = new SieveDefinition<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, 3);
 
                 var sut = filter.GetCompiledExpression();
 
@@ -39,36 +42,36 @@ namespace Sieve.NET.Core.Tests
             {
                 var itemToTest = new ABusinessObject { AnInt = 4 };
 
-                var filter = new Sieve<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, 3);
+                var filter = new SieveDefinition<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, 3);
 
                 var sut = filter.GetCompiledExpression();
 
                 sut.Invoke(itemToTest).Should().BeFalse();
             }
 
-            //[Fact]
-            //public void GivenAnIntProperty_AndAnIntInStringFormThatMatches_ReturnsTrueExpression()
-            //{
-            //    var itemToTest = new ABusinessObject { AnInt = 3 };
+            [Fact]
+            public void GivenAnIntProperty_AndAnIntInStringFormThatMatches_ReturnsTrueExpression()
+            {
+                var itemToTest = new ABusinessObject { AnInt = 3 };
 
-            //    var filter = new Sieve<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, "3");
+                var filter = new SieveDefinition<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, "3");
 
-            //    var sut = filter.GetCompiledExpression();
+                var sut = filter.GetCompiledExpression();
 
-            //    sut.Invoke(itemToTest).Should().BeTrue();
-            //}
+                sut.Invoke(itemToTest).Should().BeTrue();
+            }
 
-            //[Fact]
-            //public void GivenAnIntProperty_AndAnIntInStringFormThatDoesntMatch_ReturnsFalseExpression()
-            //{
-            //    var itemToTest = new ABusinessObject { AnInt = 4 };
+            [Fact]
+            public void GivenAnIntProperty_AndAnIntInStringFormThatDoesntMatch_ReturnsFalseExpression()
+            {
+                var itemToTest = new ABusinessObject { AnInt = 4 };
 
-            //    var filter = new Sieve<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, "3");
+                var filter = new SieveDefinition<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, "3");
 
-            //    var sut = filter.GetCompiledExpression();
+                var sut = filter.GetCompiledExpression();
 
-            //    sut.Invoke(itemToTest).Should().BeFalse();
-            //}
+                sut.Invoke(itemToTest).Should().BeFalse();
+            }
 
             [Fact]
             public void GivenAnIntProperty_AndAListOfInts_MatchesOnlyIncludedInts()
@@ -79,7 +82,7 @@ namespace Sieve.NET.Core.Tests
 
                 var acceptableValues = new List<int> { 1, 3 };
 
-                var filter = new Sieve<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, acceptableValues);
+                var filter = new SieveDefinition<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, acceptableValues);
 
                 var sut = filter.GetCompiledExpression();
                 
@@ -91,6 +94,28 @@ namespace Sieve.NET.Core.Tests
 
             }
             
+            [Fact]
+            public void GivenAnIntProperty_AndAListOfIntsInStringFormat_MatchesOnlyIncludedInts()
+            {
+                var intOf1 = new ABusinessObject { AnInt = 1 };
+                var intOf2 = new ABusinessObject { AnInt = 2 };
+                var intOf3 = new ABusinessObject { AnInt = 3 };
+
+                var acceptableValues = new List<string> { "1", "3" };
+
+                var filter = new SieveDefinition<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, acceptableValues);
+
+                var sut = filter.GetCompiledExpression();
+
+                sut.Invoke(intOf1).Should().BeTrue();
+                sut.Invoke(intOf3).Should().BeTrue();
+                sut.Invoke(intOf2).Should().BeFalse();
+
+
+
+            }
+          
+
         }
 
 

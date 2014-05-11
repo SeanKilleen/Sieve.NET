@@ -41,7 +41,7 @@
   <ItemGroup>
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sieve.cs" />
+    <Compile Include="SieveDefinition.cs" />
     <Compile Include="SieveType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

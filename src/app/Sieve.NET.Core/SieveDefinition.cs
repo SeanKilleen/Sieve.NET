@@ -4,21 +4,56 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Reflection;
 
     /// <summary>
-    /// Creates a Sieve -- a filter to apply to a given object.
+    /// Creates a SieveDefinition -- a filter to apply to a given object.
     /// </summary>
     /// <typeparam name="TTypeToFilter">The type of the object you're filtering (e.g. typeof(MyBusinessObject)</typeparam>
     /// <typeparam name="TPropertyType">The type of the property you're filtering (e.g. typeof(int)</typeparam>
-    public class Sieve<TTypeToFilter, TPropertyType>
+    public class SieveDefinition<TTypeToFilter, TPropertyType>
     {
         private string _propertyName;
         private SieveType _sieveType;
 
+        private const string DEFAULT_SEPARATOR = "|";
+
         private IList<ConstantExpression> _acceptableValues = new List<ConstantExpression>();
 
-        public Sieve(string propertyName, SieveType sieveType, IEnumerable<TPropertyType> acceptableValues)
+        public SieveDefinition(string propertyName, SieveType sieveType, string acceptableValue)
+        {
+            this._sieveType = sieveType;
+            this._propertyName = propertyName;
+
+            if (typeof(TPropertyType) == typeof(int))
+            {
+                var theInt = int.Parse(acceptableValue);
+                var constant = Expression.Constant(theInt, typeof(int));
+                _acceptableValues.Add(constant);
+            }
+            
+        }
+
+        public SieveDefinition(string propertyName, SieveType sieveType, List<string> acceptableValues)
+        {
+            this._sieveType = sieveType;
+            this._propertyName = propertyName;
+
+            if (typeof(TPropertyType) == typeof(int))
+            {
+                foreach (var item in acceptableValues)
+                {
+                    var theInt = int.Parse(item);
+                    var constant = Expression.Constant(theInt, typeof(int));
+                    _acceptableValues.Add(constant);
+                    
+                }
+            }
+
+        }
+
+
+
+        public SieveDefinition(string propertyName, SieveType sieveType, IEnumerable<TPropertyType> acceptableValues)
         {
             // TODO: Guard clauses
 
@@ -32,7 +67,7 @@
 
         }
 
-        public Sieve(string propertyName, SieveType sieveType, TPropertyType acceptableValue)
+        public SieveDefinition(string propertyName, SieveType sieveType, TPropertyType acceptableValue)
             : this(propertyName, sieveType, new List<TPropertyType> { acceptableValue })
         {
             
@@ -68,6 +103,6 @@
             return expression.Compile();
             
         }
-            
+
     }
 }
