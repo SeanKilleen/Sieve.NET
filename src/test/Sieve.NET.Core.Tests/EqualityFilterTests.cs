@@ -1,12 +1,6 @@
-﻿using System.Text;
-using System.Threading.Tasks;
-
-namespace Sieve.NET.Core.Tests
+﻿namespace Sieve.NET.Core.Tests
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq.Expressions;
-    using System.Reflection;
 
     using FluentAssertions;
 
