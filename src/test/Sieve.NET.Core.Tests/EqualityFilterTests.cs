@@ -3,6 +3,11 @@ using System.Threading.Tasks;
 
 namespace Sieve.NET.Core.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq.Expressions;
+    using System.Reflection;
+
     using FluentAssertions;
 
     using Xunit;
@@ -22,7 +27,7 @@ namespace Sieve.NET.Core.Tests
             {
                 var itemToTest = new ABusinessObject { AnInt = 3 };
 
-                var filter = new Sieve<ABusinessObject>("AnInt", SieveType.EqualitySieve, 3);
+                var filter = new Sieve<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, 3);
 
                 var sut = filter.GetCompiledExpression();
 
@@ -34,38 +39,60 @@ namespace Sieve.NET.Core.Tests
             {
                 var itemToTest = new ABusinessObject { AnInt = 4 };
 
-                var filter = new Sieve<ABusinessObject>("AnInt", SieveType.EqualitySieve, 3);
+                var filter = new Sieve<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, 3);
 
                 var sut = filter.GetCompiledExpression();
 
                 sut.Invoke(itemToTest).Should().BeFalse();
             }
 
-            [Fact]
-            public void GivenAnIntProperty_AndAnIntInStringFormThatMatches_ReturnsTrueExpression()
-            {
-                var itemToTest = new ABusinessObject { AnInt = 3 };
+            //[Fact]
+            //public void GivenAnIntProperty_AndAnIntInStringFormThatMatches_ReturnsTrueExpression()
+            //{
+            //    var itemToTest = new ABusinessObject { AnInt = 3 };
 
-                var filter = new Sieve<ABusinessObject>("AnInt", SieveType.EqualitySieve, "3");
+            //    var filter = new Sieve<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, "3");
+
+            //    var sut = filter.GetCompiledExpression();
+
+            //    sut.Invoke(itemToTest).Should().BeTrue();
+            //}
+
+            //[Fact]
+            //public void GivenAnIntProperty_AndAnIntInStringFormThatDoesntMatch_ReturnsFalseExpression()
+            //{
+            //    var itemToTest = new ABusinessObject { AnInt = 4 };
+
+            //    var filter = new Sieve<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, "3");
+
+            //    var sut = filter.GetCompiledExpression();
+
+            //    sut.Invoke(itemToTest).Should().BeFalse();
+            //}
+
+            [Fact]
+            public void GivenAnIntProperty_AndAListOfInts_MatchesOnlyIncludedInts()
+            {
+                var intOf1= new ABusinessObject { AnInt = 1 };
+                var intOf2 = new ABusinessObject { AnInt = 2 };
+                var intOf3 = new ABusinessObject { AnInt = 3 };
+
+                var acceptableValues = new List<int> { 1, 3 };
+
+                var filter = new Sieve<ABusinessObject, int>("AnInt", SieveType.EqualitySieve, acceptableValues);
 
                 var sut = filter.GetCompiledExpression();
+                
+                sut.Invoke(intOf1).Should().BeTrue();
+                sut.Invoke(intOf3).Should().BeTrue();
+                sut.Invoke(intOf2).Should().BeFalse();
 
-                sut.Invoke(itemToTest).Should().BeTrue();
-            }
 
-            [Fact]
-            public void GivenAnIntProperty_AndAnIntInStringFormThatDoesntMatch_ReturnsFalseExpression()
-            {
-                var itemToTest = new ABusinessObject { AnInt = 4 };
 
-                var filter = new Sieve<ABusinessObject>("AnInt", SieveType.EqualitySieve, "3");
-
-                var sut = filter.GetCompiledExpression();
-
-                sut.Invoke(itemToTest).Should().BeFalse();
             }
             
         }
+
 
         // TODO: Dates
         // TODO: Longs
