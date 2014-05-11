@@ -8,11 +8,11 @@
 
     // TODO: Option to throw an error if an "acceptable value" isn't parseable
     // TODO: Default separator
-    //todo: SieveDefinition vs. Sieve
-    // todo: get sieve via GetSieveFor(acceptablevalues)
-    //todo: don't allow a sieve to be created except from a SieveDefinition?
-    //todo if calling any sieve method when acceptableValues haven't been passed in at all, throw exception
-    // TODO no sieve type throws error
+    // TODO: SieveDefinition vs. Sieve
+    // TODO: get sieve via GetSieveFor(acceptablevalues)
+    // TODO: don't allow a sieve to be created except from a SieveDefinition?
+    // TODO: if calling any sieve method when acceptableValues haven't been passed in at all, throw exception
+    // TODO: no sieve type throws error
     // TODO: Custom separator
 
     public class EqualityFilterTests
