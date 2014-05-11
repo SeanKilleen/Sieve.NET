@@ -1,93 +1,83 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Threading.Tasks;
 
 namespace Sieve.NET.Core.Tests
 {
-    using System.Linq.Expressions;
-
     using FluentAssertions;
 
     using Xunit;
 
+    // TODO: Given property type, if string is entered, convert it to that property type
+    // TODO: Option to throw an error if an "acceptable value" isn't parseable
+    // TODO: Multiple acceptable values as an OR statement
+    // TODO: Default separator
+    // TODO: Custom separator
+
     public class EqualityFilterTests
     {
-        [Fact]
-        public void GivenAnIntProperty_AndAnIntThatMatches_ReturnsTrueExpression()
+        public class Integers
         {
-            var itemToTest = new ABusinessObject { AnInt = 3 };
+            [Fact]
+            public void GivenAnIntProperty_AndAnIntThatMatches_ReturnsTrueExpression()
+            {
+                var itemToTest = new ABusinessObject { AnInt = 3 };
 
-            var filter = new Sieve<ABusinessObject>("AnInt", SieveType.EqualitySieve, 3);
+                var filter = new Sieve<ABusinessObject>("AnInt", SieveType.EqualitySieve, 3);
 
-            var sut = filter.GetCompiledExpression();
+                var sut = filter.GetCompiledExpression();
 
-            sut.Invoke(itemToTest).Should().BeTrue();
-        }
+                sut.Invoke(itemToTest).Should().BeTrue();
+            }
 
-        [Fact]
-        public void GivenAnIntProperty_AndAnIntThatDoesntMatch_ReturnsFalseExpression()
-        {
-            var itemToTest = new ABusinessObject { AnInt = 4 };
+            [Fact]
+            public void GivenAnIntProperty_AndAnIntThatDoesntMatch_ReturnsFalseExpression()
+            {
+                var itemToTest = new ABusinessObject { AnInt = 4 };
 
-            var filter = new Sieve<ABusinessObject>("AnInt", SieveType.EqualitySieve, 3);
+                var filter = new Sieve<ABusinessObject>("AnInt", SieveType.EqualitySieve, 3);
 
-            var sut = filter.GetCompiledExpression();
+                var sut = filter.GetCompiledExpression();
 
-            sut.Invoke(itemToTest).Should().BeFalse();
-        }
-    }
+                sut.Invoke(itemToTest).Should().BeFalse();
+            }
 
-    public enum SieveType
-    {
-        EqualitySieve
-    }
+            [Fact]
+            public void GivenAnIntProperty_AndAnIntInStringFormThatMatches_ReturnsTrueExpression()
+            {
+                var itemToTest = new ABusinessObject { AnInt = 3 };
 
-    public class Sieve<TTypeToFilter>
-    {
-        private string _propertyName;
-        private SieveType _sieveType;
+                var filter = new Sieve<ABusinessObject>("AnInt", SieveType.EqualitySieve, "3");
 
-        private Type _objectToFilter;
+                var sut = filter.GetCompiledExpression();
 
-        private IList<ConstantExpression> _acceptableValues = new List<ConstantExpression>();
+                sut.Invoke(itemToTest).Should().BeTrue();
+            }
 
-        public Sieve(string propertyName, SieveType sieveType, int acceptableValue)
-        {
-            //TODO: Guard clauses
+            [Fact]
+            public void GivenAnIntProperty_AndAnIntInStringFormThatDoesntMatch_ReturnsFalseExpression()
+            {
+                var itemToTest = new ABusinessObject { AnInt = 4 };
 
-            _objectToFilter = typeof(TTypeToFilter);
-            this._sieveType = sieveType;
-            _propertyName = propertyName;
+                var filter = new Sieve<ABusinessObject>("AnInt", SieveType.EqualitySieve, "3");
 
-            _acceptableValues.Add(Expression.Constant(acceptableValue, typeof(int)));
-        }
+                var sut = filter.GetCompiledExpression();
 
-        public Expression<Func<TTypeToFilter, bool>> GetRawExpression()
-        {
-
-            ParameterExpression item = Expression.Parameter(typeof(TTypeToFilter), "item");
-            MemberExpression property = Expression.PropertyOrField(item, _propertyName);
-
-            var acceptableValues = new List<int?>();
-
-            //take each expression constant and put it into a binary expression of property == constant expression
-            //TODO: This uses First(). Remove that later to make compatible with lists.
-            var binaryExpression = _acceptableValues.Select(constantExpressionItem => Expression.Equal(property, constantExpressionItem)).ToList().First();
-
-            //for each binary expression, create a list of Expression lambdas 
-            var lambda = Expression.Lambda<Func<TTypeToFilter, bool>>(binaryExpression, item);
-
-            return lambda;
-        }
-
-        public Func<TTypeToFilter, bool> GetCompiledExpression()
-        {
-            var expression = this.GetRawExpression();
-            return expression.Compile();
+                sut.Invoke(itemToTest).Should().BeFalse();
+            }
             
         }
-            
+
+        // TODO: Dates
+        // TODO: Longs
+        // TODO: Strings w/case-sensitivity option & whitespace option
+
     }
+
+    // TODO: Option on how to handle blank acceptable values (all items? throw error?)
+    // TODO: "Contains" filter
+    // TODO: LessThan Filter
+    // TODO: GreaterThan Filter w/Inclusive option
+    // TODO: LessThanInclusive Filter w/Inclusive option
+
+
 }
