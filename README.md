@@ -9,8 +9,7 @@ I am new to both expressions and open source, so this will be as much an experim
 
 (Credit: http://www.markderksen.ca/)
 
-
-There's nothing here yet.
+**This is pre-alpha. There's literally nothing here yet.**
 
 What Problems are we Trying to Solve?
 ---
