@@ -64,8 +64,8 @@ Or, take the QueryString / NameValueCollection Itself and Parse it:
 
 Roadmap / Goals
 ===
-* Ability to Create an Equality Sieve for one value on a given object's `string` property
- * Then, `int` properties
+* Ability to Create an Equality Sieve for one value on a given object's `int` property
+ * Then, `string` properties
  * Then, `long` properties
  * Then, `Date` properties
 * Ability to create Sieve for Multiple Values
@@ -79,3 +79,7 @@ Roadmap / Goals
 * Search: Ability to retrieve Sieves with values from a name value collection
 * Search: Ability to retrieve sieves without values from a name value collection (to do more work on them)
 * Ability to combine Sives into one large Sieve (manually or via an extension method on `IEnumerable<Sieve>`
+* Other Sieve Types
+ * `GreaterThan` and `LessThan` Sieves (with inclusive and exclusive options)
+ * `Contains` Sieve
+ * Case-insensitivity options, etc.
