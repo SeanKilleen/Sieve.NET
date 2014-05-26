@@ -102,11 +102,12 @@ namespace Sieve.NET.Core.Tests
                 {
                     const string STRING_TO_TEST = "Hello World";
 
-                    var sut = new EqualitySieve<ABusinessObject, string>().ForProperty("AString").ForValue(STRING_TO_TEST);
+                    var sut = new EqualitySieve<ABusinessObject, string>()
+                        .ForProperty("AString")
+                        .ForValue(STRING_TO_TEST);
 
                     var expectedList = new List<string> { STRING_TO_TEST };
                     sut.AcceptableValues.Should().BeEquivalentTo(expectedList);
-
                 }
 
                 [Fact]
