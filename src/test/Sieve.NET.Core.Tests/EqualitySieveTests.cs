@@ -10,7 +10,6 @@ namespace Sieve.NET.Core.Tests
     using FluentAssertions;
     using Xunit;
     using Xunit.Extensions;
-    using Xunit.Sdk;
 
     public class EqualitySieveTests
     {
@@ -111,7 +110,7 @@ namespace Sieve.NET.Core.Tests
                 Action act = () => new EqualitySieve<ABusinessObject, int>()
                     .ForProperty(PROPERTY_NAME);
 
-                act.ShouldThrow<ArgumentException>()
+                act.ShouldThrow<PropertyNotFoundException>()
                     .And.Message.Should()
                     .ContainEquivalentOf("property")
                     .And.ContainEquivalentOf("does not exist")
@@ -168,7 +167,7 @@ namespace Sieve.NET.Core.Tests
                     .And.ContainEquivalentOf(PROPERTY_NAME);
             }
 
-       
+
         }
 
         public class ForValueTests
@@ -197,7 +196,7 @@ namespace Sieve.NET.Core.Tests
 
                     var expectedList = new List<int> { 123 };
                     sut.AcceptableValues.Should().BeEquivalentTo(expectedList);
-                    
+
                 }
 
                 [Fact]
@@ -209,7 +208,7 @@ namespace Sieve.NET.Core.Tests
 
                     var expectedList = new List<int>();
                     sut.AcceptableValues.Should().BeEquivalentTo(expectedList);
-                    
+
                 }
             }
 
@@ -241,7 +240,18 @@ namespace Sieve.NET.Core.Tests
                 //TODO: Finish
             }
         }
-     
+
+    }
+
+    public class PropertyNotFoundException : ApplicationException
+    {
+        public PropertyNotFoundException()
+        {
+        }
+        public PropertyNotFoundException(string message)
+            : base(message)
+        {
+        }
     }
 
     public class EqualitySieve<TTypeOfObjectToFilter, TPropertyType>
@@ -267,7 +277,7 @@ namespace Sieve.NET.Core.Tests
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValue(TPropertyType acceptableValue)
         {
-            AcceptableValues = new List<TPropertyType> {acceptableValue};
+            AcceptableValues = new List<TPropertyType> { acceptableValue };
             return this;
         }
 
@@ -346,14 +356,14 @@ namespace Sieve.NET.Core.Tests
                     .Where(x => x.Name.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase));
 
             var propertyInfoList = matchingProperties as IList<PropertyInfo> ?? matchingProperties.ToList();
-            
+
             if (propertyInfoList.Any())
             {
                 return propertyInfoList.First();
             }
 
             var exception = string.Format("Property '{0}' does not exist.", propertyName);
-            throw new ArgumentException(exception);
+            throw new PropertyNotFoundException(exception);
         }
 
         private static TPropertyType Convert(string input)
