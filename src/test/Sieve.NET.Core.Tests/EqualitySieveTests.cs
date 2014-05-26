@@ -45,7 +45,6 @@ namespace Sieve.NET.Core.Tests
                 sut.Invoke(aBusinessObjectWithAnIntOf2).Should().BeFalse();
                 sut.Invoke(aBusinessObjectWithAnIntOf3).Should().BeFalse();
 
-                //TODO:
             }
         }
         public class ImplicitExpressionConversionTests
@@ -57,7 +56,7 @@ namespace Sieve.NET.Core.Tests
                 var aBusinessObjectWithAnIntOf2 = new ABusinessObject { AnInt = 2 };
                 var aBusinessObjectWithAnIntOf3 = new ABusinessObject { AnInt = 3 };
 
-                //Implicit conversion means there's no call to ToExpression() necessary here.
+                //Implicit conversion means there's no call to ToCompiledExpression() necessary here.
 
                 Func<ABusinessObject, bool> sut =
                     new EqualitySieve<ABusinessObject, int>().ForProperty("AnInt").ForValue(1);
@@ -66,7 +65,6 @@ namespace Sieve.NET.Core.Tests
                 sut.Invoke(aBusinessObjectWithAnIntOf2).Should().BeFalse();
                 sut.Invoke(aBusinessObjectWithAnIntOf3).Should().BeFalse();
 
-                //TODO:
             }
 
             [Fact]
@@ -85,7 +83,6 @@ namespace Sieve.NET.Core.Tests
                 sut.Compile().Invoke(aBusinessObjectWithAnIntOf2).Should().BeFalse();
                 sut.Compile().Invoke(aBusinessObjectWithAnIntOf3).Should().BeFalse();
             }
-            //TODO
         }
         public class ForPropertyTests
         {
