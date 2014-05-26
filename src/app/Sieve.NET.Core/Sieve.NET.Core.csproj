@@ -40,8 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EqualitySieve.cs" />
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyNotFoundException.cs" />
     <Compile Include="SieveDefinition.cs" />
     <Compile Include="SieveType.cs" />
   </ItemGroup>
