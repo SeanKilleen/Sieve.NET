@@ -4,10 +4,9 @@ using System.Linq;
 namespace Sieve.NET.Core.Tests
 {
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Reflection;
-
     using FluentAssertions;
-
     using Xunit;
     using Xunit.Extensions;
 
@@ -93,12 +92,82 @@ namespace Sieve.NET.Core.Tests
 
        
         }
+
+        public class ForValueTests
+        {
+            public class ASingleStringTests
+            {
+                [Fact]
+                public void SingleString_WhenPropertyIsString_AddsToList()
+                {
+                    const string STRING_TO_TEST = "Hello World";
+
+                    var sut = new EqualitySieve<ABusinessObject, string>().ForProperty("AString").ForValue(STRING_TO_TEST);
+
+                    var expectedList = new List<string> { STRING_TO_TEST };
+                    sut.AcceptableValues.Should().BeEquivalentTo(expectedList);
+
+                }
+
+                [Fact]
+                public void SingleString_WhenPropertyIsNotAString_ConvertsAndAddsToList()
+                {
+                    const string STRING_TO_TEST = "123";
+
+                    var sut = new EqualitySieve<ABusinessObject, int>().ForProperty("AnInt").ForValue(STRING_TO_TEST);
+
+                    var expectedList = new List<int> { 123 };
+                    sut.AcceptableValues.Should().BeEquivalentTo(expectedList);
+                    
+                }
+
+                [Fact]
+                public void SingleString_WhenInvalidToConvert_SetsAcceptableValuesToEmptyList()
+                {
+                    const string STRING_TO_TEST = "123abc";
+
+                    var sut = new EqualitySieve<ABusinessObject, int>().ForProperty("AnInt").ForValue(STRING_TO_TEST);
+
+                    var expectedList = new List<int>();
+                    sut.AcceptableValues.Should().BeEquivalentTo(expectedList);
+                    
+                }
+            }
+
+            public class ItemOfPropertyTypeTests
+            {
+                [Fact]
+                public void SingleItemOfPropertyType_SetsAcceptableValuesList()
+                {
+                    const int NUMBER_TO_TEST = 123;
+
+                    var sut = new EqualitySieve<ABusinessObject, int>().ForProperty("AnInt").ForValue(NUMBER_TO_TEST);
+
+                    var expectedList = new List<int> { NUMBER_TO_TEST };
+                    sut.AcceptableValues.Should().BeEquivalentTo(expectedList);
+                }
+            }
+        }
+
+        public class ForValues
+        {
+            public class SeparatedString
+            {
+                //TODO: Finish
+            }
+
+            public class ListOfPropertyType
+            {
+                //TODO: Finish
+            }
+        }
      
     }
 
     public class EqualitySieve<TTypeOfObjectToFilter, TPropertyType>
     {
         public PropertyInfo PropertyToFilter { get; private set; }
+        public List<TPropertyType> AcceptableValues { get; private set; }
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForProperty(string propertyName)
         {
@@ -115,6 +184,29 @@ namespace Sieve.NET.Core.Tests
 
             return this;
         }
+
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValue(TPropertyType acceptableValue)
+        {
+            AcceptableValues = new List<TPropertyType> {acceptableValue};
+            return this;
+        }
+
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValue(string stringValue)
+        {
+            try
+            {
+                TPropertyType convertedValue = Convert(stringValue);
+                AcceptableValues = new List<TPropertyType> { convertedValue };
+                return this;
+
+            }
+            catch (Exception)
+            {
+                AcceptableValues = new List<TPropertyType>();
+                return this;
+            }
+        }
+
 
         private static void EnsurePropertyTypesMatch(PropertyInfo matchingProperty)
         {
@@ -148,14 +240,17 @@ namespace Sieve.NET.Core.Tests
             throw new ArgumentException(exception);
         }
 
-        //public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValue(TPropertyType propertyValue)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        private static TPropertyType Convert(string input)
+        {
+            var converter = TypeDescriptor.GetConverter(typeof(TPropertyType));
+            return (TPropertyType)converter.ConvertFromString(input);
+        }
 
         //public Expression<Func<TTypeOfObjectToFilter, bool>> ToExpression()
         //{
         //    throw new NotImplementedException();
         //}
+
+
     }
 }
