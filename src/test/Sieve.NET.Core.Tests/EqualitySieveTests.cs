@@ -3,6 +3,9 @@ using System.Linq;
 
 namespace Sieve.NET.Core.Tests
 {
+    using System.Collections.Generic;
+    using System.Reflection;
+
     using FluentAssertions;
 
     using Xunit;
@@ -10,85 +13,139 @@ namespace Sieve.NET.Core.Tests
 
     public class EqualitySieveTests
     {
-        [Fact]
-        public void ForProperty_SetsPropertyName()
+        public class ForPropertyTests
         {
-            var propertyName = "AnInt";
-            var sut = new EqualitySieve<ABusinessObject, int>()
-                .ForProperty(propertyName);
+            [Fact]
+            public void ForProperty_SetsProperty()
+            {
+                const string PROPERTY_NAME = "AnInt";
+                var sut = new EqualitySieve<ABusinessObject, int>()
+                    .ForProperty(PROPERTY_NAME);
 
-            sut.PropertyName.Should().Be(propertyName);
+                sut.PropertyToFilter.Name.Should().Be(PROPERTY_NAME);
+            }
+
+            [Fact]
+            public void ForProperty_WithInvalidPropertyName_ThrowsException()
+            {
+
+                // ReSharper disable once StringLiteralTypo
+                const string PROPERTY_NAME = "PropertyNameThatDoesntExist";
+                Action act = () => new EqualitySieve<ABusinessObject, int>()
+                    .ForProperty(PROPERTY_NAME);
+
+                act.ShouldThrow<ArgumentException>()
+                    .And.Message.Should()
+                    .ContainEquivalentOf("property")
+                    .And.ContainEquivalentOf("does not exist")
+                    .And.ContainEquivalentOf(PROPERTY_NAME);
+            }
+
+            [Fact]
+            public void ForProperty_DoesNotCareAboutCase()
+            {
+                const string PROPERTY_NAME = "anInt"; //The property name is actually "AnInt"
+                var sut = new EqualitySieve<ABusinessObject, int>()
+                    .ForProperty(PROPERTY_NAME);
+
+                sut.PropertyToFilter.Name.Should().Be("AnInt");
+                sut.PropertyToFilter.PropertyType.Should().Be<int>();
+
+            }
+
+            [Theory]
+            [InlineData("")]
+            [InlineData(null)]
+            [InlineData("    ")]
+            public void ForProperty_WithEmptyPropertyName_ThrowsException(string itemToTry)
+            {
+                string propertyName = itemToTry;
+
+                Action act = () => new EqualitySieve<ABusinessObject, int>()
+                    .ForProperty(propertyName);
+
+                act.ShouldThrow<Exception>()
+                    .And.Message.Should()
+                    .ContainEquivalentOf("property name")
+                    .And.ContainEquivalentOf("given")
+                    .And.ContainEquivalentOf("null or empty");
+            }
+
+            [Fact]
+            // ReSharper disable once IdentifierTypo
+            public void ForProperty_WhenGivenTypeDoesntMatchActualPropertyType_ThrowsError()
+            {
+                const string PROPERTY_NAME = "ADateTime";
+
+                //A DateTime is not an int, so this should throw an error.
+                Action act = () => new EqualitySieve<ABusinessObject, int>()
+                    .ForProperty(PROPERTY_NAME);
+
+                act.ShouldThrow<ArgumentException>()
+                    .And.Message.Should()
+                    .ContainEquivalentOf("property")
+                    .And.ContainEquivalentOf("DateTime")
+                    .And.ContainEquivalentOf("int")
+                    .And.ContainEquivalentOf("doesn't match")
+                    .And.ContainEquivalentOf("type")
+                    .And.ContainEquivalentOf(PROPERTY_NAME);
+            }
+
+       
         }
-
-        [Fact]
-        public void ForProperty_WithInvalidPropertyName_ThrowsException()
-        {
-
-            var propertyName = "PropertyNameThatDoesntExist";
-            Action act = () => new EqualitySieve<ABusinessObject, int>()
-                .ForProperty(propertyName);
-
-            act.ShouldThrow<ArgumentException>()
-                .And.Message.Should()
-                .ContainEquivalentOf("property")
-                .And.ContainEquivalentOf("does not exist")
-                .And.ContainEquivalentOf(propertyName);
-        }
-
-        [Fact]
-        public void ForProperty_DoesNotCareAboutCase()
-        {
-            var propertyName = "anInt"; //The property name is actually "AnInt"
-            var sut = new EqualitySieve<ABusinessObject, int>()
-                .ForProperty(propertyName);
-
-            sut.PropertyName.Should().Be("AnInt");
-            
-        }
-
-        [Theory]
-        [InlineData("")]
-        [InlineData(null)]
-        [InlineData("    ")]
-        public void ForProperty_WithEmptyPropertyName_ThrowsException(string itemToTry)
-        {
-            string propertyName = itemToTry;
-
-            Action act = () => new EqualitySieve<ABusinessObject, int>()
-                .ForProperty(propertyName);
-
-            act.ShouldThrow<ArgumentNullException>()
-                .And.Message.Should()
-                .ContainEquivalentOf("property name")
-                .And.ContainEquivalentOf("given")
-                .And.ContainEquivalentOf("null or empty");
-        }
-            
-
-        //TODO property type not matching yields an error.
-
-
+     
     }
 
     public class EqualitySieve<TTypeOfObjectToFilter, TPropertyType>
     {
-        public string PropertyName { get; private set; }
+        public PropertyInfo PropertyToFilter { get; private set; }
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForProperty(string propertyName)
         {
             if (string.IsNullOrWhiteSpace(propertyName))
             {
-                throw new ArgumentNullException("the given property name is null or empty");
+                throw new Exception("the given property name is null or empty");
             }
-            var matchingProperties = typeof(TTypeOfObjectToFilter).GetProperties().Where(x => x.Name.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase));
-            if (!matchingProperties.Any())
-            {
-                var exception = string.Format("Property '{0}' does not exist.", propertyName);
-                throw new ArgumentException(exception);
-            }
-            
-            PropertyName = matchingProperties.First().Name;
+
+            var matchingProperty = FindMatchingProperty(propertyName);
+
+            EnsurePropertyTypesMatch(matchingProperty);
+
+            this.PropertyToFilter = matchingProperty;
+
             return this;
+        }
+
+        private static void EnsurePropertyTypesMatch(PropertyInfo matchingProperty)
+        {
+            if (matchingProperty.PropertyType == typeof(TPropertyType))
+            {
+                return;
+            }
+            var message =
+                string.Format(
+                    "property type doesn't match for property {0}. Sieve expects {1} but property is {2}",
+                    matchingProperty.Name,
+                    typeof(TPropertyType).Name,
+                    matchingProperty.PropertyType);
+            throw new ArgumentException(message);
+        }
+
+        private static PropertyInfo FindMatchingProperty(string propertyName)
+        {
+            var matchingProperties =
+                typeof(TTypeOfObjectToFilter).GetProperties()
+                    .Where(x => x.Name.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase));
+
+            var propertyInfoList = matchingProperties as IList<PropertyInfo> ?? matchingProperties.ToList();
+            
+            if (propertyInfoList.Any())
+            {
+                return propertyInfoList.First();
+            }
+
+            var exception = string.Format("Property '{0}' does not exist.", propertyName);
+            throw new ArgumentException(exception);
         }
 
         //public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValue(TPropertyType propertyValue)
