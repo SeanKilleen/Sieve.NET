@@ -4,6 +4,7 @@ namespace Sieve.NET.Core.Tests
     using System;
     using System.Collections.Generic;
     using System.Linq.Expressions;
+    using System.Threading;
 
     using FluentAssertions;
     using Xunit;
@@ -47,6 +48,7 @@ namespace Sieve.NET.Core.Tests
 
             }
         }
+
         public class ImplicitExpressionConversionTests
         {
             [Fact]
@@ -84,6 +86,7 @@ namespace Sieve.NET.Core.Tests
                 sut.Compile().Invoke(aBusinessObjectWithAnIntOf3).Should().BeFalse();
             }
         }
+       
         public class ForPropertyTests
         {
             [Fact]
@@ -225,15 +228,65 @@ namespace Sieve.NET.Core.Tests
         public class ForValuesTests
         {
 
-            public class SeparatedStringTests
-            {
-                //TODO: Finish
-            }
-
             public class IEnumerableOfPropertyTypeTests
             {
-                //TODO: Finish
+                [Fact]
+                public void ListOfInts_BecomesListOfAcceptableValues()
+                {
+                    var valuesToTry = new List<int> { 1, 3 };
+
+                    var aBusinessObjectWithAnIntOf1 = new ABusinessObject { AnInt = 1 };
+                    var aBusinessObjectWithAnIntOf2 = new ABusinessObject { AnInt = 2 };
+                    var aBusinessObjectWithAnIntOf3 = new ABusinessObject { AnInt = 3 };
+
+
+                    var sut = new EqualitySieve<ABusinessObject, int>().ForProperty("AnInt").ForValues(valuesToTry);
+                    sut.AcceptableValues.Should().BeEquivalentTo(valuesToTry);
+
+                    var compiled = sut.ToCompiledExpression();
+                    compiled.Invoke(aBusinessObjectWithAnIntOf1).Should().BeTrue();
+                    compiled.Invoke(aBusinessObjectWithAnIntOf2).Should().BeFalse();
+                    compiled.Invoke(aBusinessObjectWithAnIntOf3).Should().BeTrue();
+                }
+
+                [Fact]
+                public void ArrayOfInts_BecomesListOfAcceptableValues()
+                {
+                    var valuesToTry = new[] { 1, 3 };
+
+                    var sut = new EqualitySieve<ABusinessObject, int>().ForProperty("AnInt").ForValues(valuesToTry);
+                    sut.AcceptableValues.Should().BeEquivalentTo(valuesToTry);
+                }
+
+                [Fact]
+                public void ListOfStrings_BecomesListOfAcceptableStringValues()
+                {
+                    var aBusinessObjectWithAStringOfOne = new ABusinessObject { AString = "One"};
+                    var aBusinessObjectWithAStringOfTwo = new ABusinessObject { AString = "Two" };
+                    var aBusinessObjectWithAStringOfThree = new ABusinessObject { AString = "Three" };
+
+                    var valuesToTry = new[] { "One", "Three" };
+
+                    var sut = new EqualitySieve<ABusinessObject, string>().ForProperty("AString").ForValues(valuesToTry);
+                    sut.AcceptableValues.Should().BeEquivalentTo(valuesToTry);
+
+                    var compiled = sut.ToCompiledExpression();
+
+                    compiled.Invoke(aBusinessObjectWithAStringOfOne).Should().BeTrue();
+                    compiled.Invoke(aBusinessObjectWithAStringOfTwo).Should().BeFalse();
+                    compiled.Invoke(aBusinessObjectWithAStringOfThree).Should().BeTrue();
+
+                }
             }
+
+            public class SeparatedStringTests
+            {
+                //TODO: empty string entries are ignored
+                //TODO: spaces are ignored on either side
+                //TODO: multiple comma separated string ints become list of acceptable values
+                //TODO: multiple comma separate strings become list of strings with string type
+            }
+
         }
 
     }

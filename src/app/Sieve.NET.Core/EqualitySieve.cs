@@ -134,5 +134,11 @@ namespace Sieve.NET.Core.Tests
         {
             return this.ToExpression().Compile();
         }
+
+        public EqualitySieve<TTypeOfObjectToFilter,TPropertyType> ForValues(IEnumerable<TPropertyType> acceptableValues)
+        {
+            AcceptableValues = acceptableValues.ToList();
+            return this;
+        }
     }
 }
