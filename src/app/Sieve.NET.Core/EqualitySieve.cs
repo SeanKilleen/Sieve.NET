@@ -13,8 +13,9 @@ namespace Sieve.NET.Core
     {
         public PropertyInfo PropertyToFilter { get; private set; }
         public List<TPropertyType> AcceptableValues { get; private set; }
-        public string Separator { get; private set; }
-        private const string DEFAULT_SEPARATOR = ",";
+        public IEnumerable<string> Separators { get; private set; }
+
+        public readonly IEnumerable<string> DEFAULT_SEPARATORS = new List<string>{","};
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForProperty(string propertyName)
         {
@@ -140,8 +141,13 @@ namespace Sieve.NET.Core
         }
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(string valuesListToParse)
         {
+            if (Separators == null || !Separators.Any())
+            {
+                Separators = DEFAULT_SEPARATORS;
+            }
+            var separators = this.Separators as string[] ?? this.Separators.ToArray();
             var arrayOfItems = valuesListToParse.Split(
-                new[] { Separator ?? DEFAULT_SEPARATOR },
+                separators,
                 StringSplitOptions.RemoveEmptyEntries).Where(x=>!string.IsNullOrWhiteSpace(x)).ToList();
 
             this.AcceptableValues = new List<TPropertyType>();
@@ -157,7 +163,16 @@ namespace Sieve.NET.Core
         {
             if (!string.IsNullOrWhiteSpace(newSeparatorString))
             {
-                this.Separator = newSeparatorString;
+                this.Separators = new List<string> { newSeparatorString };
+            }
+            return this;
+        }
+
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> WithSeparators(List<string> separatorStrings)
+        {
+            if (separatorStrings != null && separatorStrings.Any())
+            {
+                Separators = separatorStrings;
             }
             return this;
         }

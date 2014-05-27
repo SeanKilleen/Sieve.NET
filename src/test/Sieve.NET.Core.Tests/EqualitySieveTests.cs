@@ -341,25 +341,25 @@ namespace Sieve.NET.Core.Tests
             [Fact]
             public void GivenSeparator_ChangesSeparator()
             {
-                const string SEPARATOR_STRING = "|";
+                var SEPARATOR_STRING = new List<string> { "|" };
                 var sut = new EqualitySieve<ABusinessObject, int>()
-                    .WithSeparator(SEPARATOR_STRING);
-                sut.Separator.ShouldBeEquivalentTo(SEPARATOR_STRING);
+                    .WithSeparator("|");
+                sut.Separators.ShouldBeEquivalentTo(SEPARATOR_STRING);
             }
 
             [Theory]
             [InlineData(null)]
             [InlineData("")]
             [InlineData("    ")]
-            public void GivenEmptySeparator_DoesNotChangeSeparator(string separatorToTry)
+            public void GivenEmptySeparator_DoesntChangeSeparator(string separatorToTry)
             {
                 var sut = new EqualitySieve<ABusinessObject, int>();
                 
-                var defaultSeparator = sut.Separator;
+                var currentSeparator = sut.Separators;
 
                 sut = sut.WithSeparator(separatorToTry);
 
-                sut.Separator.ShouldBeEquivalentTo(defaultSeparator);
+                sut.Separators.ShouldBeEquivalentTo(currentSeparator);
             }
 
             [Fact]
@@ -372,5 +372,55 @@ namespace Sieve.NET.Core.Tests
                 sut.AcceptableValues.ShouldBeEquivalentTo(expectedList);
             }
         }
+
+        public class WithSeparatorsTests
+        {
+            [Fact]
+            public void GivenSeparators_ChangesSeparators()
+            {
+                var SEPARATOR_STRING = new List<string> { "|", "," };
+                var sut = new EqualitySieve<ABusinessObject, int>()
+                    .WithSeparators(SEPARATOR_STRING);
+                sut.Separators.ShouldBeEquivalentTo(SEPARATOR_STRING);
+            }
+
+            [Fact]
+            public void GivenNullList_DoesntChangeSeparator()
+            {
+                var sut = new EqualitySieve<ABusinessObject, int>();
+
+                var currentSeparators = sut.Separators;
+
+                sut = sut.WithSeparators(null);
+
+                sut.Separators.ShouldBeEquivalentTo(currentSeparators);
+            }
+
+            [Fact]
+            public void GivenEmptyList_DoesntChangeSeparator()
+            {
+                var sut = new EqualitySieve<ABusinessObject, int>();
+
+                var currentSeparators = sut.Separators;
+
+                sut = sut.WithSeparators(new List<string>());
+
+                sut.Separators.ShouldBeEquivalentTo(currentSeparators);
+            }
+
+            [Fact]
+            public void WhenChangingSeparators_AcceptableValuesUseAllNewSeparators()
+            {
+                var expectedList = new List<int> { 1, 2, 3 };
+
+                var separators = new List<string> { "|", "," };
+                var sut = new EqualitySieve<ABusinessObject, int>().ForProperty("AnInt")
+                    .WithSeparators(separators).ForValues("1 ,2  | 3");
+
+                sut.AcceptableValues.ShouldBeEquivalentTo(expectedList);
+            }
+
+        }
+
     }
 }
