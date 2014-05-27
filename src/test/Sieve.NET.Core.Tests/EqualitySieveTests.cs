@@ -4,6 +4,7 @@ namespace Sieve.NET.Core.Tests
     using System;
     using System.Collections.Generic;
     using System.Linq.Expressions;
+
     using FluentAssertions;
     using Xunit;
     using Xunit.Extensions;
@@ -332,6 +333,43 @@ namespace Sieve.NET.Core.Tests
                     compiled.Invoke(ABusinessObjectWithAnIntOf2).Should().BeFalse();
                     compiled.Invoke(ABusinessObjectWithAnIntOf3).Should().BeTrue();
                 }
+            }
+        }
+
+        public class WithSeparatorTests
+        {
+            [Fact]
+            public void GivenSeparator_ChangesSeparator()
+            {
+                const string SEPARATOR_STRING = "|";
+                var sut = new EqualitySieve<ABusinessObject, int>()
+                    .WithSeparator(SEPARATOR_STRING);
+                sut.Separator.ShouldBeEquivalentTo(SEPARATOR_STRING);
+            }
+
+            [Theory]
+            [InlineData(null)]
+            [InlineData("")]
+            [InlineData("    ")]
+            public void GivenEmptySeparator_DoesNotChangeSeparator(string separatorToTry)
+            {
+                var sut = new EqualitySieve<ABusinessObject, int>();
+                
+                var defaultSeparator = sut.Separator;
+
+                sut = sut.WithSeparator(separatorToTry);
+
+                sut.Separator.ShouldBeEquivalentTo(defaultSeparator);
+            }
+
+            [Fact]
+            public void WhenChangingSeparator_AcceptableValuesUseNewSeparator()
+            {
+                var expectedList = new List<int> { 1, 2, 3 };
+                
+                var sut = new EqualitySieve<ABusinessObject, int>().ForProperty("AnInt").WithSeparator("|").ForValues("1 |2  | 3");
+
+                sut.AcceptableValues.ShouldBeEquivalentTo(expectedList);
             }
         }
     }

@@ -1,4 +1,4 @@
-namespace Sieve.NET.Core.Tests
+namespace Sieve.NET.Core
 {
     using System;
     using System.Collections.Generic;
@@ -6,6 +6,8 @@ namespace Sieve.NET.Core.Tests
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
+
+    using Sieve.NET.Core.Tests;
 
     public class EqualitySieve<TTypeOfObjectToFilter, TPropertyType>
     {
@@ -67,13 +69,7 @@ namespace Sieve.NET.Core.Tests
 
             var expressionToReturn = PredicateBuilder.False<TTypeOfObjectToFilter>();
 
-            foreach (var lambdaItem in lambdas)
-            {
-                expressionToReturn = expressionToReturn.Or(lambdaItem);
-            }
-
-            return expressionToReturn;
-
+            return lambdas.Aggregate(expressionToReturn, (current, lambdaItem) => current.Or(lambdaItem));
         }
 
         public static implicit operator Expression<Func<TTypeOfObjectToFilter, bool>>(
@@ -139,23 +135,31 @@ namespace Sieve.NET.Core.Tests
 
         public EqualitySieve<TTypeOfObjectToFilter,TPropertyType> ForValues(IEnumerable<TPropertyType> acceptableValues)
         {
-            AcceptableValues = acceptableValues.ToList();
+            this.AcceptableValues = acceptableValues.ToList();
             return this;
         }
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(string valuesListToParse)
         {
             var arrayOfItems = valuesListToParse.Split(
-                new[] { DEFAULT_SEPARATOR },
+                new[] { Separator ?? DEFAULT_SEPARATOR },
                 StringSplitOptions.RemoveEmptyEntries).Where(x=>!string.IsNullOrWhiteSpace(x)).ToList();
 
-            AcceptableValues = new List<TPropertyType>();
+            this.AcceptableValues = new List<TPropertyType>();
             foreach (var item in arrayOfItems)
             {
-                AcceptableValues.Add(Convert(item.Trim()));
+                this.AcceptableValues.Add(Convert(item.Trim()));
             }
 
             return this;
         }
 
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> WithSeparator(string newSeparatorString)
+        {
+            if (!string.IsNullOrWhiteSpace(newSeparatorString))
+            {
+                this.Separator = newSeparatorString;
+            }
+            return this;
+        }
     }
 }
