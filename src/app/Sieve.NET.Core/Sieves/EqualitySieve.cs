@@ -1,4 +1,4 @@
-namespace Sieve.NET.Core
+namespace Sieve.NET.Core.Sieves
 {
     using System;
     using System.Collections.Generic;
@@ -7,13 +7,15 @@ namespace Sieve.NET.Core
     using System.Linq.Expressions;
     using System.Reflection;
 
-    using Sieve.NET.Core.Tests;
+    using Sieve.NET.Core.Exceptions;
+    using Sieve.NET.Core.Options;
 
     public class EqualitySieve<TTypeOfObjectToFilter, TPropertyType>
     {
         public PropertyInfo PropertyToFilter { get; private set; }
         public List<TPropertyType> AcceptableValues { get; private set; }
         public IEnumerable<string> Separators { get; private set; }
+        public EmptyValuesListBehavior EmptyValuesListBehavior { get; private set; } 
 
         public readonly IEnumerable<string> DEFAULT_SEPARATORS = new List<string>{","};
 
@@ -60,6 +62,11 @@ namespace Sieve.NET.Core
             var item = Expression.Parameter(typeof(TTypeOfObjectToFilter), "item");
             var property = Expression.PropertyOrField(item, this.PropertyToFilter.Name);
 
+            if (this.AcceptableValues == null || !this.AcceptableValues.Any())
+            {
+                return this.HandleEmptyAcceptableValuesList(item);
+            }
+
             var acceptableConstants = this.AcceptableValues.Select(acceptableValueItem => Expression.Constant(acceptableValueItem, typeof(TPropertyType))).ToList();
 
             // take each expression constant and put it into a binary expression of property == constant expression
@@ -71,6 +78,34 @@ namespace Sieve.NET.Core
             var expressionToReturn = PredicateBuilder.False<TTypeOfObjectToFilter>();
 
             return lambdas.Aggregate(expressionToReturn, (current, lambdaItem) => current.Or(lambdaItem));
+        }
+
+        private Expression<Func<TTypeOfObjectToFilter, bool>> HandleEmptyAcceptableValuesList(ParameterExpression parameter)
+        {
+            if (this.EmptyValuesListBehavior == EmptyValuesListBehavior.ThrowSieveValuesNotFoundException)
+            {
+                throw new NoSieveValuesSuppliedException();
+            }
+            var trueConstant = Expression.Constant(true, typeof(bool));
+            var falseConstant = Expression.Constant(false, typeof(bool));
+
+            if (this.EmptyValuesListBehavior == EmptyValuesListBehavior.LetAllObjectsThrough)
+            {
+                var binaryExpression = Expression.Equal(trueConstant, trueConstant);
+                var expression = Expression.Lambda<Func<TTypeOfObjectToFilter, bool>>(binaryExpression, parameter);
+                return expression;
+
+            }
+            if(this.EmptyValuesListBehavior == EmptyValuesListBehavior.LetNoObjectsThrough)
+            {
+                var binaryExpression = Expression.Equal(trueConstant, falseConstant);
+                var expression = Expression.Lambda<Func<TTypeOfObjectToFilter, bool>>(binaryExpression, parameter);
+                return expression;
+            }
+
+            throw new Exception("Could not determine empty values list behavior.");
+
+
         }
 
         public static implicit operator Expression<Func<TTypeOfObjectToFilter, bool>>(
@@ -141,9 +176,9 @@ namespace Sieve.NET.Core
         }
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(string valuesListToParse)
         {
-            if (Separators == null || !Separators.Any())
+            if (this.Separators == null || !this.Separators.Any())
             {
-                Separators = DEFAULT_SEPARATORS;
+                this.Separators = this.DEFAULT_SEPARATORS;
             }
             var separators = this.Separators as string[] ?? this.Separators.ToArray();
             var arrayOfItems = valuesListToParse.Split(
@@ -172,8 +207,14 @@ namespace Sieve.NET.Core
         {
             if (separatorStrings != null && separatorStrings.Any())
             {
-                Separators = separatorStrings;
+                this.Separators = separatorStrings;
             }
+            return this;
+        }
+
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> WithEmptyValuesListBehavior(EmptyValuesListBehavior emptyValuesListBehavior)
+        {
+            this.EmptyValuesListBehavior = emptyValuesListBehavior;
             return this;
         }
     }

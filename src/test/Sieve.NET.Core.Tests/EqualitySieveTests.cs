@@ -6,6 +6,11 @@ namespace Sieve.NET.Core.Tests
     using System.Linq.Expressions;
 
     using FluentAssertions;
+
+    using Sieve.NET.Core.Exceptions;
+    using Sieve.NET.Core.Options;
+    using Sieve.NET.Core.Sieves;
+
     using Xunit;
     using Xunit.Extensions;
 
@@ -422,5 +427,42 @@ namespace Sieve.NET.Core.Tests
 
         }
 
+        public class WithEmptyValuesBehaviorTests
+        {
+            [Fact]
+            public void DefaultBehaviorIsToLetAllThrough()
+            {
+                //no values defined
+                var sut = new EqualitySieve<ABusinessObject, int>().ForProperty("AnInt").ToCompiledExpression();
+
+                sut.Invoke(ABusinessObjectWithAnIntOf1).Should().BeTrue();
+                sut.Invoke(ABusinessObjectWithAnIntOf2).Should().BeTrue();
+                sut.Invoke(ABusinessObjectWithAnIntOf3).Should().BeTrue();
+            }
+
+            [Fact]
+            public void WithLetNoneThroughOption_DoesntAllowAnyThrough()
+            {
+                //no values defined
+                var sut = new EqualitySieve<ABusinessObject, int>().ForProperty("AnInt")
+                    .WithEmptyValuesListBehavior(EmptyValuesListBehavior.LetNoObjectsThrough).ToCompiledExpression();
+
+                sut.Invoke(ABusinessObjectWithAnIntOf1).Should().BeFalse();
+                sut.Invoke(ABusinessObjectWithAnIntOf2).Should().BeFalse();
+                sut.Invoke(ABusinessObjectWithAnIntOf3).Should().BeFalse();
+            }
+
+            [Fact]
+            public void WithThrowExceptionOption_ThrowsANoSieveValuesSuppliedException()
+            {
+                //no values defined
+                Action act = () => new EqualitySieve<ABusinessObject, int>().ForProperty("AnInt")
+                    .WithEmptyValuesListBehavior(EmptyValuesListBehavior.ThrowSieveValuesNotFoundException)
+                    .ToCompiledExpression();
+
+                act.ShouldThrow<NoSieveValuesSuppliedException>();
+            }
+            
+        }
     }
 }

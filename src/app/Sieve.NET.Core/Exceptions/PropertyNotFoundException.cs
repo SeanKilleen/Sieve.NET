@@ -1,12 +1,9 @@
-namespace Sieve.NET.Core.Tests
+namespace Sieve.NET.Core.Exceptions
 {
     using System;
 
     public class PropertyNotFoundException : ApplicationException
     {
-        public PropertyNotFoundException()
-        {
-        }
         public PropertyNotFoundException(string message)
             : base(message)
         {
