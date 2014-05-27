@@ -11,6 +11,8 @@ namespace Sieve.NET.Core.Tests
     {
         public PropertyInfo PropertyToFilter { get; private set; }
         public List<TPropertyType> AcceptableValues { get; private set; }
+        public string Separator { get; private set; }
+        private const string DEFAULT_SEPARATOR = ",";
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForProperty(string propertyName)
         {
@@ -140,5 +142,20 @@ namespace Sieve.NET.Core.Tests
             AcceptableValues = acceptableValues.ToList();
             return this;
         }
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(string valuesListToParse)
+        {
+            var arrayOfItems = valuesListToParse.Split(
+                new[] { DEFAULT_SEPARATOR },
+                StringSplitOptions.RemoveEmptyEntries).Where(x=>!string.IsNullOrWhiteSpace(x)).ToList();
+
+            AcceptableValues = new List<TPropertyType>();
+            foreach (var item in arrayOfItems)
+            {
+                AcceptableValues.Add(Convert(item.Trim()));
+            }
+
+            return this;
+        }
+
     }
 }
