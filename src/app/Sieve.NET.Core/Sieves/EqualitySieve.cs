@@ -18,9 +18,9 @@ namespace Sieve.NET.Core.Sieves
 
         public List<TPropertyType> AcceptableValues { get; private set; }
         public IEnumerable<string> Separators { get; private set; }
-        public EmptyValuesListBehavior EmptyValuesListBehavior { get; private set; } 
+        public EmptyValuesListBehavior EmptyValuesListBehavior { get; private set; }
 
-        public readonly IEnumerable<string> DEFAULT_SEPARATORS = new List<string>{","};
+        public readonly IEnumerable<string> DEFAULT_SEPARATORS = new List<string> { "," };
 
         /// <summary>
         /// 
@@ -33,25 +33,40 @@ namespace Sieve.NET.Core.Sieves
         /// </remarks>
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForProperty(Expression<Func<TTypeOfObjectToFilter, TPropertyType>> propertyLambda)
         {
-            Type typePropertyShouldBeFrom = typeof(TTypeOfObjectToFilter);
 
-            var member = propertyLambda.Body as MemberExpression;
-            if (member == null)
-                throw new ArgumentException(string.Format("Expression '{0}' refers to a method, not a property.",propertyLambda));
-
-            var propInfo = member.Member as PropertyInfo;
-            if (propInfo == null)
-                throw new ArgumentException(string.Format("Expression '{0}' refers to a field, not a property.",propertyLambda));
-
-            Debug.Assert(propInfo.ReflectedType != null, "propInfo.ReflectedType != null");
-            if (typePropertyShouldBeFrom != propInfo.ReflectedType &&
-        !typePropertyShouldBeFrom.IsSubclassOf(propInfo.ReflectedType))
-                throw new ArgumentException(string.Format("Expresion '{0}' refers to a property that is not from type {1}.",propertyLambda,
-                    typePropertyShouldBeFrom));
+            var propInfo = ExtractPropertyInfoFromLambda(propertyLambda);
 
             PropertyToFilter = propInfo;
 
             return this;
+        }
+
+        private PropertyInfo ExtractPropertyInfoFromLambda(Expression<Func<TTypeOfObjectToFilter, TPropertyType>> propertyLambda)
+        {
+            Type typePropertyShouldBeFrom = typeof(TTypeOfObjectToFilter);
+
+            var member = propertyLambda.Body as MemberExpression;
+
+            if (member == null)
+            {
+                throw new ArgumentException(string.Format("Expression '{0}' refers to a method, not a property.", propertyLambda));
+            }
+
+            var propInfo = member.Member as PropertyInfo;
+            
+            if (propInfo == null)
+            {
+                throw new ArgumentException(string.Format("Expression '{0}' refers to a field, not a property.", propertyLambda));
+            }
+
+            Debug.Assert(propInfo.ReflectedType != null, "propInfo.ReflectedType != null");
+            
+            if (typePropertyShouldBeFrom != propInfo.ReflectedType && !typePropertyShouldBeFrom.IsSubclassOf(propInfo.ReflectedType))
+            {
+                throw new ArgumentException(string.Format("Expresion '{0}' refers to a property that is not from type {1}.", propertyLambda, typePropertyShouldBeFrom));
+            }
+            
+            return propInfo;
         }
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValue(TPropertyType acceptableValue)
@@ -115,7 +130,7 @@ namespace Sieve.NET.Core.Sieves
                 return expression;
 
             }
-            if(this.EmptyValuesListBehavior == EmptyValuesListBehavior.LetNoObjectsThrough)
+            if (this.EmptyValuesListBehavior == EmptyValuesListBehavior.LetNoObjectsThrough)
             {
                 var binaryExpression = Expression.Equal(trueConstant, falseConstant);
                 var expression = Expression.Lambda<Func<TTypeOfObjectToFilter, bool>>(binaryExpression, parameter);
@@ -188,7 +203,7 @@ namespace Sieve.NET.Core.Sieves
             return this.ToExpression().Compile();
         }
 
-        public EqualitySieve<TTypeOfObjectToFilter,TPropertyType> ForValues(IEnumerable<TPropertyType> acceptableValues)
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(IEnumerable<TPropertyType> acceptableValues)
         {
             this.AcceptableValues = acceptableValues.ToList();
             return this;
@@ -202,7 +217,7 @@ namespace Sieve.NET.Core.Sieves
             var separators = this.Separators as string[] ?? this.Separators.ToArray();
             var arrayOfItems = valuesListToParse.Split(
                 separators,
-                StringSplitOptions.RemoveEmptyEntries).Where(x=>!string.IsNullOrWhiteSpace(x)).ToList();
+                StringSplitOptions.RemoveEmptyEntries).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
 
             this.AcceptableValues = new List<TPropertyType>();
             foreach (var item in arrayOfItems)
