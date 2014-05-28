@@ -3,6 +3,7 @@ namespace Sieve.NET.Core.Sieves
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -13,24 +14,42 @@ namespace Sieve.NET.Core.Sieves
     public class EqualitySieve<TTypeOfObjectToFilter, TPropertyType>
     {
         public PropertyInfo PropertyToFilter { get; private set; }
+        private Type TypeToFilter { get; set; }
+
         public List<TPropertyType> AcceptableValues { get; private set; }
         public IEnumerable<string> Separators { get; private set; }
         public EmptyValuesListBehavior EmptyValuesListBehavior { get; private set; } 
 
         public readonly IEnumerable<string> DEFAULT_SEPARATORS = new List<string>{","};
 
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForProperty(string propertyName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="propertyLambda">A lambda that indicates the property that we'd like to filter on.</param>
+        /// <returns></returns>
+        /// <remarks>
+        /// This is almost entirely possible due to the excellent answer on:
+        /// http://stackoverflow.com/questions/671968/retrieving-property-name-from-lambda-expression
+        /// </remarks>
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForProperty(Expression<Func<TTypeOfObjectToFilter, TPropertyType>> propertyLambda)
         {
-            if (string.IsNullOrWhiteSpace(propertyName))
-            {
-                throw new Exception("the given property name is null or empty");
-            }
+            Type typePropertyShouldBeFrom = typeof(TTypeOfObjectToFilter);
 
-            var matchingProperty = FindMatchingProperty(propertyName);
+            var member = propertyLambda.Body as MemberExpression;
+            if (member == null)
+                throw new ArgumentException(string.Format("Expression '{0}' refers to a method, not a property.",propertyLambda));
 
-            EnsurePropertyTypesMatch(matchingProperty);
+            var propInfo = member.Member as PropertyInfo;
+            if (propInfo == null)
+                throw new ArgumentException(string.Format("Expression '{0}' refers to a field, not a property.",propertyLambda));
 
-            this.PropertyToFilter = matchingProperty;
+            Debug.Assert(propInfo.ReflectedType != null, "propInfo.ReflectedType != null");
+            if (typePropertyShouldBeFrom != propInfo.ReflectedType &&
+        !typePropertyShouldBeFrom.IsSubclassOf(propInfo.ReflectedType))
+                throw new ArgumentException(string.Format("Expresion '{0}' refers to a property that is not from type {1}.",propertyLambda,
+                    typePropertyShouldBeFrom));
+
+            PropertyToFilter = propInfo;
 
             return this;
         }
