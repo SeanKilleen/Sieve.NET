@@ -63,7 +63,7 @@ namespace Sieve.NET.Core.Sieves
             
             if (typePropertyShouldBeFrom != propInfo.ReflectedType && !typePropertyShouldBeFrom.IsSubclassOf(propInfo.ReflectedType))
             {
-                throw new ArgumentException(string.Format("Expresion '{0}' refers to a property that is not from type {1}.", propertyLambda, typePropertyShouldBeFrom));
+                throw new ArgumentException(string.Format("Expression '{0}' refers to a property that is not from type {1}.", propertyLambda, typePropertyShouldBeFrom));
             }
             
             return propInfo;
