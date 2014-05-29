@@ -48,9 +48,13 @@ It's super annoying to do the following (pseudo-code):
 Instead, wouldn't it be cool to do something like:
 
 	[Sieve("MyUniqueFilterName", "LastName")]
-    public class PersonLastNameFilter : ISieve<Person>
+    public class PersonLastNameFilter : IFindableSieve<Person>
     { 
-		return new Sieve<Person, EqualitySieve>("LastName");
+		public Sieve<Person> GetSieve()
+		{
+			return new EqualitySieve<Person>()
+				.ForProperty(x => x.LastName);
+		}
     } 
 
 And then find all the filters via:
@@ -64,4 +68,4 @@ Or, take the QueryString / NameValueCollection Itself and Parse it:
 
 Roadmap / Goals
 ===
-See the Issues section for this repo. I'll do my best to not it stagnate.
+See the Issues section for this repo. I'll do my best to not let it stagnate.
