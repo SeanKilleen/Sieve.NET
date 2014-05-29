@@ -16,11 +16,12 @@ namespace Sieve.NET.Core.Sieves
         public PropertyInfo PropertyToFilter { get; private set; }
         private Type TypeToFilter { get; set; }
 
-        public List<TPropertyType> AcceptableValues { get; private set; }
+        public ICollection<TPropertyType> AcceptableValues { get; private set; }
         public IEnumerable<string> Separators { get; private set; }
         public EmptyValuesListBehavior EmptyValuesListBehavior { get; private set; }
 
         public readonly IEnumerable<string> DEFAULT_SEPARATORS = new List<string> { "," };
+
 
         /// <summary>
         /// 
