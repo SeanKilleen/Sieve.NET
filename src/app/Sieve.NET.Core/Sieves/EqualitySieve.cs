@@ -26,9 +26,12 @@ namespace Sieve.NET.Core.Sieves
 
         public ICollection<TPropertyType> AcceptableValues { get; private set; }
         public IEnumerable<string> Separators { get; private set; }
+        
+        // ReSharper disable once MemberCanBePrivate.Global -- this is public so users can reference it.
         public EmptyValuesListBehavior EmptyValuesListBehavior { get; private set; }
 
-        public readonly IEnumerable<string> DEFAULT_SEPARATORS = new List<string> { "," };
+        // ReSharper disable once MemberCanBePrivate.Global -- this is public on purpose so that folks can reference it if they need to.
+        public readonly IEnumerable<string> DefaultSeparators = new List<string> { "," };
 
 
         /// <summary>
@@ -163,39 +166,6 @@ namespace Sieve.NET.Core.Sieves
             return sieve.ToCompiledExpression();
         }
 
-
-        private static void EnsurePropertyTypesMatch(PropertyInfo matchingProperty)
-        {
-            if (matchingProperty.PropertyType == typeof(TPropertyType))
-            {
-                return;
-            }
-            var message =
-                string.Format(
-                    "property type doesn't match for property {0}. Sieve expects {1} but property is {2}",
-                    matchingProperty.Name,
-                    typeof(TPropertyType).Name,
-                    matchingProperty.PropertyType);
-            throw new ArgumentException(message);
-        }
-
-        private static PropertyInfo FindMatchingProperty(string propertyName)
-        {
-            var matchingProperties =
-                typeof(TTypeOfObjectToFilter).GetProperties()
-                    .Where(x => x.Name.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase));
-
-            var propertyInfoList = matchingProperties as IList<PropertyInfo> ?? matchingProperties.ToList();
-
-            if (propertyInfoList.Any())
-            {
-                return propertyInfoList.First();
-            }
-
-            var exception = string.Format("Property '{0}' does not exist.", propertyName);
-            throw new PropertyNotFoundException(exception);
-        }
-
         private static TPropertyType Convert(string input)
         {
             var converter = TypeDescriptor.GetConverter(typeof(TPropertyType));
@@ -221,8 +191,10 @@ namespace Sieve.NET.Core.Sieves
         {
             if (this.Separators == null || !this.Separators.Any())
             {
-                this.Separators = this.DEFAULT_SEPARATORS;
+                this.Separators = this.DefaultSeparators;
             }
+
+            // ReSharper disable once PossibleMultipleEnumeration
             var separators = this.Separators as string[] ?? this.Separators.ToArray();
             var arrayOfItems = valuesListToParse.Split(
                 separators,
