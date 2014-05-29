@@ -11,10 +11,18 @@ namespace Sieve.NET.Core.Sieves
     using Sieve.NET.Core.Exceptions;
     using Sieve.NET.Core.Options;
 
+    public class EqualitySieve<TTypeOfOjectToFilter>
+    {
+        public EqualitySieve<TTypeOfOjectToFilter, TPropertyType> ForProperty<TPropertyType>(
+            Expression<Func<TTypeOfOjectToFilter, TPropertyType>> propertyExpression)
+        {
+            return new EqualitySieve<TTypeOfOjectToFilter, TPropertyType>().ForProperty(propertyExpression);
+        }
+    }
+
     public class EqualitySieve<TTypeOfObjectToFilter, TPropertyType>
     {
         public PropertyInfo PropertyToFilter { get; private set; }
-        private Type TypeToFilter { get; set; }
 
         public ICollection<TPropertyType> AcceptableValues { get; private set; }
         public IEnumerable<string> Separators { get; private set; }
