@@ -26,11 +26,11 @@ So instead of creation an expression manually, or having to pick stuff out of a 
     new string valuesThatComeFromSomewhere = "killeen, smith, harris";
 
     // only 
-    new Sieve<Person, EqualitySieve>("LastName")
+    new EqualitySieve<Person>()
+		.ForProperty(x => x.LastName)
         .ForValues(valuesThatComeFromSomewhere)
-        .UseSeparator(",")
-        .RemoveWhitespace()
-        .EmptyValuesBehavior(EmpyValuesBehavior.AllowAll);
+        .WithSeparator(",")
+        .EmptyValuesBehavior(EmpyValuesBehavior.LetAllObjectsThrough);
 
 Problem 2 -- Filters as Findable Classes
 ---
