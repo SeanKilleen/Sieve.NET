@@ -308,5 +308,11 @@ namespace Sieve.NET.Core.Sieves
             _knownAcceptableValues.AddRange(listOfValues);
             return this;
         }
+
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValues(string listOfValues)
+        {
+            _potentiallyAcceptableValuesToParse = listOfValues;
+            return this;
+        }
     }
 }
