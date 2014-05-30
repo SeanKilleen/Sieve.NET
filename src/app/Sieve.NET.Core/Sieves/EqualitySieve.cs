@@ -80,10 +80,20 @@ namespace Sieve.NET.Core.Sieves
 
         private List<string> ParseListOfPotentiallyAcceptableItems(IEnumerable<string> separators)
         {
-            
-            if (string.IsNullOrWhiteSpace(_potentiallyAcceptableValuesToParse)) { return new List<string>();}
+            var result = new List<string>();
+            foreach (var parseValueItem in _potentiallyAcceptableValuesToParse)
+            {
+                result.AddRange(GetParsedValuesFromPotentiallyAcceptableParseString(parseValueItem, separators));
+            }
 
-            return _potentiallyAcceptableValuesToParse.Split(separators.ToArray(), StringSplitOptions.RemoveEmptyEntries)
+            return result;
+        }
+
+        private List<string> GetParsedValuesFromPotentiallyAcceptableParseString(string parseValueItem, IEnumerable<string> separators)
+        {
+            if (string.IsNullOrWhiteSpace(parseValueItem)) { return new List<string>(); }
+
+            return parseValueItem.Split(separators.ToArray(), StringSplitOptions.RemoveEmptyEntries)
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .ToList();
         }
@@ -110,7 +120,7 @@ namespace Sieve.NET.Core.Sieves
         public readonly IEnumerable<string> DefaultSeparators = new List<string> {",", "|"};
 
         private List<string> _potentiallyAcceptableValues = new List<string>();
-        private string _potentiallyAcceptableValuesToParse = string.Empty;
+        private List<string> _potentiallyAcceptableValuesToParse = new List<string>();
 
         /// <summary>
         /// 
@@ -255,7 +265,7 @@ namespace Sieve.NET.Core.Sieves
         }
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(string valuesListToParse)
         {
-            _potentiallyAcceptableValuesToParse = valuesListToParse;
+            _potentiallyAcceptableValuesToParse.Add(valuesListToParse);
 
             return this;
         }
@@ -311,7 +321,7 @@ namespace Sieve.NET.Core.Sieves
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValues(string listOfValues)
         {
-            _potentiallyAcceptableValuesToParse = listOfValues;
+            _potentiallyAcceptableValuesToParse.Add(listOfValues);
             return this;
         }
     }
