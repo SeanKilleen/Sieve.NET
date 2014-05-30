@@ -31,7 +31,7 @@ namespace Sieve.NET.Core.Sieves
         public EmptyValuesListBehavior EmptyValuesListBehavior { get; private set; }
 
         // ReSharper disable once MemberCanBePrivate.Global -- this is public on purpose so that folks can reference it if they need to.
-        public readonly IEnumerable<string> DefaultSeparators = new List<string> { ",", "|" };
+        public readonly IEnumerable<string> DefaultSeparators = new List<string> {",", "|"};
 
 
         /// <summary>
