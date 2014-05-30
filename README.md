@@ -1,5 +1,6 @@
 Sieve.NET
 =========
+[![Build status](https://ci.appveyor.com/api/projects/status/0h8ong5gc43bops4)](https://ci.appveyor.com/project/SeanKilleen/sieve-net)
 
 An expression-based filter library for .NET. We aim for a fluent interface to build expressions to filter complex business objects.
 
