@@ -10,7 +10,7 @@ I am new to both expressions and open source, so this will be as much an experim
 
 (Credit: http://www.markderksen.ca/)
 
-**This is pre-alpha. There's literally nothing here yet.**
+**This is pre-alpha. Jump in and help us make it official!.**
 
 What Problems are we Trying to Solve?
 ---
