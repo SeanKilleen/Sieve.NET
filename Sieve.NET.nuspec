@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Package</id>
+    <version>1.0.0</version>
+    <authors>Sean</authors>
+    <owners>Sean</owners>
+    <licenseUrl>https://github.com/SeanKilleen/Sieve.NET/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/SeanKilleen/Sieve.NET</projectUrl>
+    <!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An expression-based filter library for .NET</description>
+    <releaseNotes>Initial nuget package.</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>Filtering Expressions .NET</tags>
+    <dependencies>
+      <!--<dependency id="SampleDependency" version="1.0" />-->
+    </dependencies>
+  </metadata>
+</package>
