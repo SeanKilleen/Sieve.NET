@@ -172,11 +172,6 @@ namespace Sieve.NET.Core.Sieves
             return (TPropertyType)converter.ConvertFromString(input);
         }
 
-        //public Expression<Func<TTypeOfObjectToFilter, bool>> ToExpression()
-        //{
-        //    throw new NotImplementedException();
-        //}
-
         public Func<TTypeOfObjectToFilter, bool> ToCompiledExpression()
         {
             return this.ToExpression().Compile();
