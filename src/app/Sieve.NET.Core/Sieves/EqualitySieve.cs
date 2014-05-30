@@ -290,5 +290,18 @@ namespace Sieve.NET.Core.Sieves
 
             return this;
         }
+
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValue(TPropertyType additionalValue)
+        {
+            _knownAcceptableValues.Add(additionalValue);
+            return this;
+        }
+
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValue(string additionalValue)
+        {
+            _potentiallyAcceptableValues.Add(additionalValue);
+            return this;
+        }
+
     }
 }
