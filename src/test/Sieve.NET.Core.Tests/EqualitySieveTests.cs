@@ -325,7 +325,7 @@ namespace Sieve.NET.Core.Tests
 
         public class ForAdditionalValueTests
         {
-            public class TPropertyType
+            public class TPropertyTypeTests
             {
                 [Fact]
                 public void WhenNoValueExists_AddsValue()
