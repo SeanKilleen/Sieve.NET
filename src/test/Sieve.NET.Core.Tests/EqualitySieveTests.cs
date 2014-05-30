@@ -4,6 +4,8 @@ namespace Sieve.NET.Core.Tests
     using System;
     using System.Collections.Generic;
     using System.Linq.Expressions;
+    using System.Runtime.InteropServices;
+    using System.Runtime.Serialization;
 
     using FluentAssertions;
 
@@ -108,6 +110,27 @@ namespace Sieve.NET.Core.Tests
             public class ASingleStringTests
             {
                 [Fact]
+                public void WithInvalidValue_IgnoredByDefault()
+                {
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ForValue("2abc");
+
+                    sut.AcceptableValues.Should().BeEmpty();
+                }
+
+                [Fact]
+                public void WithInvalidValue_AndInvalidValueBehaviorSetToThrowException_ExceptionIsThrown()
+                {
+                    Action act =
+                        () =>
+                            new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                                .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException)
+                                .ForValue("2abc");
+
+                    act.ShouldThrow<InvalidSieveValueException>().And.Message.Should().ContainEquivalentOf("2abc");
+
+                }
+
+                [Fact]
                 public void SingleString_WhenPropertyIsString_AddsToList()
                 {
                     const string STRING_TO_TEST = "Hello World";
@@ -205,6 +228,29 @@ namespace Sieve.NET.Core.Tests
 
             public class SeparatedStringTests
             {
+                [Fact]
+                public void WithEntryContainingInvalidValue_IgnoredByDefault()
+                {
+                    var expectedValues = new List<int> { 1 };
+
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ForValues("1, 2abc");
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expectedValues);
+                }
+
+                [Fact]
+                public void WithEntryContainingInvalidValue_AndInvalidValueBehaviorSetToThrowException_ExceptionIsThrown()
+                {
+
+                    Action act = () => new EqualitySieve<ABusinessObject>()
+                        .ForProperty(x => x.AnInt)
+                        .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException)
+                        .ForValues("1, 2abc");
+
+                    act.ShouldThrow<InvalidSieveValueException>().And.Message.Should().ContainEquivalentOf("2abc");
+
+                }
+
+
                 [Fact]
                 public void MultipleStringEntries_ForStringBasedSieve_BecomeMultipleAcceptableValues()
                 {
@@ -408,5 +454,58 @@ namespace Sieve.NET.Core.Tests
             
         }
 
+        public class WithInvalidValueBehaviorTests
+        {
+
+            [Fact]
+            public void WithoutCalling_InvalidValueBehaviorIsSetByDefaultToIgnore()
+            {
+                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime);
+
+                sut.InvalidValueBehavior.ShouldBeEquivalentTo(InvalidValueBehavior.IgnoreInvalidValue);
+
+            }
+
+            [Fact]
+            public void WithoutCalling_InvalidValuesAreIgnoredByDefault()
+            {
+                var stringValues = "7/25/2010, 12/1abc/2012";
+                var expectedList = new List<DateTime> { new DateTime(2010, 7, 25) };
+                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime).ForValues(stringValues);
+
+                sut.AcceptableValues.ShouldBeEquivalentTo(expectedList);
+            }
+
+            [Fact]
+            public void WhenSpecifyingItShouldbeIgnored_InvalidValuesAreIgnoredByDefault()
+            {
+                const string STRING_VALUES = "7/25/2010, 12/1abc/2012";
+                
+                var expectedList = new List<DateTime> { new DateTime(2010, 7, 25) };
+
+                var sut =
+                    new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime)
+                        .WithInvalidValueBehavior(InvalidValueBehavior.IgnoreInvalidValue)
+                        .ForValues(STRING_VALUES);
+
+                sut.InvalidValueBehavior.ShouldBeEquivalentTo(InvalidValueBehavior.IgnoreInvalidValue);
+                sut.AcceptableValues.ShouldBeEquivalentTo(expectedList);
+            }
+
+            [Fact]
+            public void WhenSpecifyingAnExceptionBeThrown_InvalidValueThrowsInvalidSieveValueException()
+            {
+                const string STRING_VALUES = "7/25/2010, 12/1abc/2012";
+
+                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime)
+                    .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException);
+
+                Action act = () => sut.ForValues(STRING_VALUES);
+
+                act.ShouldThrow<InvalidSieveValueException>().And.Message.Should().ContainEquivalentOf("12/1abc/2012");
+
+            }
+
+        }
     }
 }
