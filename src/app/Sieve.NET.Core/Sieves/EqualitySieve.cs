@@ -29,6 +29,7 @@ namespace Sieve.NET.Core.Sieves
         
         // ReSharper disable once MemberCanBePrivate.Global -- this is public so users can reference it.
         public EmptyValuesListBehavior EmptyValuesListBehavior { get; private set; }
+        public InvalidValueBehavior InvalidValueBehavior { get; private set; }
 
         // ReSharper disable once MemberCanBePrivate.Global -- this is public on purpose so that folks can reference it if they need to.
         public readonly IEnumerable<string> DefaultSeparators = new List<string> {",", "|"};
@@ -43,13 +44,13 @@ namespace Sieve.NET.Core.Sieves
         /// This is almost entirely possible due to the excellent answer on:
         /// http://stackoverflow.com/questions/671968/retrieving-property-name-from-lambda-expression
         /// </remarks>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForProperty(Expression<Func<TTypeOfObjectToFilter, TPropertyType>> propertyLambda)
+        internal EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForProperty(Expression<Func<TTypeOfObjectToFilter, TPropertyType>> propertyLambda)
         {
 
             var propInfo = ExtractPropertyInfoFromLambda(propertyLambda);
 
             PropertyToFilter = propInfo;
-
+            
             return this;
         }
 
@@ -98,6 +99,12 @@ namespace Sieve.NET.Core.Sieves
             }
             catch (Exception)
             {
+                if (InvalidValueBehavior == InvalidValueBehavior.ThrowInvalidSieveValueException)
+                {
+                    var message = string.Format("Invalid value: {0}", stringValue);
+                    throw new InvalidSieveValueException(message);
+                }
+
                 this.AcceptableValues = new List<TPropertyType>();
                 return this;
             }
@@ -196,9 +203,24 @@ namespace Sieve.NET.Core.Sieves
                 StringSplitOptions.RemoveEmptyEntries).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
 
             this.AcceptableValues = new List<TPropertyType>();
-            foreach (var item in arrayOfItems)
+            foreach (var stringItem in arrayOfItems)
             {
-                this.AcceptableValues.Add(Convert(item.Trim()));
+                TPropertyType convertedItem;
+                try
+                {
+                    convertedItem = Convert(stringItem.Trim());
+                    this.AcceptableValues.Add(convertedItem);
+                }
+                    // ReSharper disable once EmptyGeneralCatchClause -- we have an empty catch clause here because we want the default value to be ignoring the issue and not adding it.
+                catch
+                {
+                    if (this.InvalidValueBehavior != InvalidValueBehavior.ThrowInvalidSieveValueException)
+                    {
+                        continue;
+                    }
+                    var message = string.Format("Invalid value: {0}", stringItem);
+                    throw new InvalidSieveValueException(message);
+                }
             }
 
             return this;
@@ -225,6 +247,13 @@ namespace Sieve.NET.Core.Sieves
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> WithEmptyValuesListBehavior(EmptyValuesListBehavior emptyValuesListBehavior)
         {
             this.EmptyValuesListBehavior = emptyValuesListBehavior;
+            return this;
+        }
+
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> WithInvalidValueBehavior(InvalidValueBehavior invalidValueBehavior)
+        {
+            InvalidValueBehavior = invalidValueBehavior;
+
             return this;
         }
     }
