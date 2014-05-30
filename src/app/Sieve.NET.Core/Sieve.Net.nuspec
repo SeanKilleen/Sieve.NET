@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Sieve.NET</id>
-    <version>0.8.0</version>
+    <version>0.9.0</version>
     <authors>Sean Killeen</authors>
     <owners>Sean Killeen</owners>
     <licenseUrl>https://github.com/SeanKilleen/Sieve.NET/blob/master/LICENSE</licenseUrl>
