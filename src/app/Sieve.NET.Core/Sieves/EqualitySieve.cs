@@ -24,8 +24,83 @@ namespace Sieve.NET.Core.Sieves
     {
         public PropertyInfo PropertyToFilter { get; private set; }
 
-        public ICollection<TPropertyType> AcceptableValues { get; private set; }
+        public ICollection<TPropertyType> AcceptableValues
+        {
+            get
+            {
+                return GetAcceptableValues();
+            }
+        }
+
+        private List<TPropertyType> _knownAcceptableValues = new List<TPropertyType>();
+
+        private ICollection<TPropertyType> GetAcceptableValues()
+        {
+            var separators = this.GetSeparatorsOrDefault();
+
+            var parsedItems = this.ParseListOfPotentiallyAcceptableItems(separators);
+            
+            this.AddParsedItemsToPotentiallyAcceptableValues(parsedItems);
+
+            var result = this.ParsePotentiallyAcceptableValues();
+
+            return result;
+        }
+
+        private ICollection<TPropertyType> ParsePotentiallyAcceptableValues()
+        {
+            var result = new List<TPropertyType>();
+            result.AddRange(_knownAcceptableValues);
+
+            foreach (var stringItem in _potentiallyAcceptableValues)
+            {
+                try
+                {
+                    var convertedItem = Convert(stringItem.Trim());
+                    result.Add(convertedItem);
+                }
+                catch
+                {
+                    if (this.InvalidValueBehavior != InvalidValueBehavior.ThrowInvalidSieveValueException)
+                    {
+                        continue;
+                    }
+                    var message = string.Format("Invalid value: {0}", stringItem);
+                    throw new InvalidSieveValueException(message);
+                }
+            }
+
+            return result;
+        }
+
+        private void AddParsedItemsToPotentiallyAcceptableValues(List<string> parsedItems)
+        {
+            parsedItems.ForEach(x => _potentiallyAcceptableValues.Add(x));
+        }
+
+        private List<string> ParseListOfPotentiallyAcceptableItems(IEnumerable<string> separators)
+        {
+            
+            if (string.IsNullOrWhiteSpace(_potentiallyAcceptableValuesToParse)) { return new List<string>();}
+
+            return _potentiallyAcceptableValuesToParse.Split(separators.ToArray(), StringSplitOptions.RemoveEmptyEntries)
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .ToList();
+        }
+
+        private IEnumerable<string> GetSeparatorsOrDefault()
+        {
+            if (this.Separators == null || !this.Separators.Any())
+            {
+                this.Separators = this.DefaultSeparators;
+            }
+
+            // ReSharper disable once PossibleMultipleEnumeration -- this is covered by tests
+            return Separators;
+        }
+
         public IEnumerable<string> Separators { get; private set; }
+
         
         // ReSharper disable once MemberCanBePrivate.Global -- this is public so users can reference it.
         public EmptyValuesListBehavior EmptyValuesListBehavior { get; private set; }
@@ -34,6 +109,8 @@ namespace Sieve.NET.Core.Sieves
         // ReSharper disable once MemberCanBePrivate.Global -- this is public on purpose so that folks can reference it if they need to.
         public readonly IEnumerable<string> DefaultSeparators = new List<string> {",", "|"};
 
+        private List<string> _potentiallyAcceptableValues = new List<string>();
+        private string _potentiallyAcceptableValuesToParse = string.Empty;
 
         /// <summary>
         /// 
@@ -84,30 +161,14 @@ namespace Sieve.NET.Core.Sieves
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValue(TPropertyType acceptableValue)
         {
-            this.AcceptableValues = new List<TPropertyType> { acceptableValue };
+            _knownAcceptableValues = new List<TPropertyType> {acceptableValue};
             return this;
         }
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValue(string stringValue)
         {
-            try
-            {
-                TPropertyType convertedValue = Convert(stringValue);
-                this.AcceptableValues = new List<TPropertyType> { convertedValue };
-                return this;
-
-            }
-            catch (Exception)
-            {
-                if (InvalidValueBehavior == InvalidValueBehavior.ThrowInvalidSieveValueException)
-                {
-                    var message = string.Format("Invalid value: {0}", stringValue);
-                    throw new InvalidSieveValueException(message);
-                }
-
-                this.AcceptableValues = new List<TPropertyType>();
-                return this;
-            }
+            _potentiallyAcceptableValues = new List<string>{stringValue};
+            return this;
         }
 
         public Expression<Func<TTypeOfObjectToFilter, bool>> ToExpression()
@@ -186,42 +247,15 @@ namespace Sieve.NET.Core.Sieves
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(IEnumerable<TPropertyType> acceptableValues)
         {
-            this.AcceptableValues = acceptableValues.ToList();
+            List<TPropertyType> acceptableValuesList = acceptableValues.ToList();
+
+            acceptableValuesList.ForEach(x=> _knownAcceptableValues.Add(x));
+
             return this;
         }
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(string valuesListToParse)
         {
-            if (this.Separators == null || !this.Separators.Any())
-            {
-                this.Separators = this.DefaultSeparators;
-            }
-
-            // ReSharper disable once PossibleMultipleEnumeration
-            var separators = this.Separators as string[] ?? this.Separators.ToArray();
-            var arrayOfItems = valuesListToParse.Split(
-                separators,
-                StringSplitOptions.RemoveEmptyEntries).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-
-            this.AcceptableValues = new List<TPropertyType>();
-            foreach (var stringItem in arrayOfItems)
-            {
-                TPropertyType convertedItem;
-                try
-                {
-                    convertedItem = Convert(stringItem.Trim());
-                    this.AcceptableValues.Add(convertedItem);
-                }
-                    // ReSharper disable once EmptyGeneralCatchClause -- we have an empty catch clause here because we want the default value to be ignoring the issue and not adding it.
-                catch
-                {
-                    if (this.InvalidValueBehavior != InvalidValueBehavior.ThrowInvalidSieveValueException)
-                    {
-                        continue;
-                    }
-                    var message = string.Format("Invalid value: {0}", stringItem);
-                    throw new InvalidSieveValueException(message);
-                }
-            }
+            _potentiallyAcceptableValuesToParse = valuesListToParse;
 
             return this;
         }
