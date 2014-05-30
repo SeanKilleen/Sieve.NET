@@ -323,6 +323,58 @@ namespace Sieve.NET.Core.Tests
             }
         }
 
+        public class ForAdditionalValueTests
+        {
+            public class TPropertyType
+            {
+                [Fact]
+                public void WhenNoValueExists_AddsValue()
+                {
+                    var expectedValues = new List<int> { 1 };
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                        .ForAdditionalValue(1);
+
+                    sut.AcceptableValues.Should().BeEquivalentTo(expectedValues);
+                }
+
+                [Fact]
+                public void WhenValueExists_AddsAdditionalValue()
+                {
+                    var expectedValues = new List<int> { 1, 2 };
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                        .ForValue(1).ForAdditionalValue(2);
+
+                    sut.AcceptableValues.Should().BeEquivalentTo(expectedValues);
+                }
+            }
+
+            public class Strings
+            {
+                [Fact]
+                public void WhenNoValueExists_AddsValue()
+                {
+                    var expectedValues = new List<int> { 1, 2 };
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                        .ForValue("1").ForAdditionalValue("2");
+
+                    sut.AcceptableValues.Should().BeEquivalentTo(expectedValues);
+
+                }
+
+                [Fact]
+                public void WhenValueExists_AddsAdditionalValue()
+                {
+                    var expectedValues = new List<int> { 1 };
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                        .ForAdditionalValue("1");
+
+                    sut.AcceptableValues.Should().BeEquivalentTo(expectedValues);
+                }
+            }
+
+
+        }
+
         public class ForValuesTests
         {
             public class EnumerableOfPropertyTypeTests
