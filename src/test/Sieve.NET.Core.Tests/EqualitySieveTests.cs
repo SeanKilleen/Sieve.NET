@@ -5,6 +5,7 @@ namespace Sieve.NET.Core.Tests
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Globalization;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
@@ -373,6 +374,70 @@ namespace Sieve.NET.Core.Tests
             }
 
 
+        }
+
+        public class ForAdditionalValuesTests
+        {
+                public class TPropertyTypeTests
+            {
+                [Fact]
+                public void WhenNoValuesExist_AddsValues()
+                {
+                    var listOfValues = new List<int> { 1, 2, 3 };
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                        .ForAdditionalValues(listOfValues);
+
+                    sut.AcceptableValues.Should().BeEquivalentTo(listOfValues);
+
+                }
+
+                [Fact]
+                public void WhenValuesExist_AddsAdditionalValues()
+                {
+                    var listOfValues = new List<int> { 1, 2, 3 };
+                    var additionalValues = new List<int> { 4, 5, 6 };
+
+                    var fullList = listOfValues.ToList().Union(additionalValues);
+                    
+                    var sut = new EqualitySieve<ABusinessObject>()
+                        .ForProperty(x => x.AnInt)
+                        .ForValues(listOfValues)
+                        .ForAdditionalValues(additionalValues);
+
+                    sut.AcceptableValues.Should().BeEquivalentTo(fullList);
+                }
+            }
+
+            public class Strings
+            {
+                [Fact]
+                public void WhenNoValueListsExist_AddsValues()
+                {
+                    var listOfValues = new List<int> { 1, 2, 3 };
+                    var sut = new EqualitySieve<ABusinessObject>()
+                        .ForProperty(x => x.AnInt)
+                        .ForAdditionalValues("1, 2, 3");
+
+                    sut.AcceptableValues.Should().BeEquivalentTo(listOfValues);
+                }
+
+                [Fact]
+                public void WhenValueListExists_AddsAdditionalValueList()
+                {
+                    var listOfValues = new List<int> { 1, 2, 3 };
+                    var additionalValues = new List<int> { 4, 5, 6 };
+
+                    var fullList = listOfValues.ToList().Union(additionalValues);
+
+                    var sut = new EqualitySieve<ABusinessObject>()
+                        .ForProperty(x => x.AnInt)
+                        .ForValues("1, 2, 3")
+                        .ForAdditionalValues("4, 5, 6");
+
+                    sut.AcceptableValues.Should().BeEquivalentTo(fullList);
+
+                }
+            }
         }
 
         public class ForValuesTests
