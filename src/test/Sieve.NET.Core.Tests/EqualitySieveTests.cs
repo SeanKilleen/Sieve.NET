@@ -5,6 +5,7 @@ namespace Sieve.NET.Core.Tests
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Globalization;
+    using System.Linq;
     using System.Linq.Expressions;
 
     using FluentAssertions;
@@ -393,7 +394,17 @@ namespace Sieve.NET.Core.Tests
                 [Fact]
                 public void WhenValuesExist_AddsAdditionalValues()
                 {
-                    throw new NotImplementedException();
+                    var listOfValues = new List<int> { 1, 2, 3 };
+                    var additionalValues = new List<int> { 4, 5, 6 };
+
+                    var fullList = listOfValues.ToList().Union(additionalValues);
+                    
+                    var sut = new EqualitySieve<ABusinessObject>()
+                        .ForProperty(x => x.AnInt)
+                        .ForValues(listOfValues)
+                        .ForAdditionalValues(additionalValues);
+
+                    sut.AcceptableValues.Should().BeEquivalentTo(fullList);
                 }
             }
 
