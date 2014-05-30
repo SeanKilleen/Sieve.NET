@@ -8,7 +8,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B39E484C-352A-4140-BB54-6B513501AA97}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
-		Sieve.Net.nuspec = Sieve.Net.nuspec
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{5EE9B8DB-1E05-4335-8AA9-66EB11F8075C}"
