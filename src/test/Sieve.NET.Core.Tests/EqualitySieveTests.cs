@@ -375,6 +375,41 @@ namespace Sieve.NET.Core.Tests
 
         }
 
+        public class ForAdditionalValuesTests
+        {
+                public class TPropertyTypeTests
+            {
+                [Fact]
+                public void WhenNoValuesExist_AddsValues()
+                {
+                    throw new NotImplementedException();
+                }
+
+                [Fact]
+                public void WhenValuesExist_AddsAdditionalValues()
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public class Strings
+            {
+                [Fact]
+                public void WhenNoValueListsExist_AddsValues()
+                {
+                    throw new NotImplementedException();
+                }
+
+                [Fact]
+                public void WhenValueExists_AddsAdditionalValue()
+                {
+                    throw new NotImplementedException();
+
+                }
+            }
+        }
+
+
         public class ForValuesTests
         {
             public class EnumerableOfPropertyTypeTests
