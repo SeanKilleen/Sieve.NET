@@ -40,7 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\InvalidSieveValueException.cs" />
     <Compile Include="Options\EmptyValuesListBehavior.cs" />
+    <Compile Include="Options\InvalidValueBehavior.cs" />
     <Compile Include="Sieves\EqualitySieve.cs" />
     <Compile Include="Exceptions\NoSieveValuesSuppliedException.cs" />
     <Compile Include="PredicateBuilder.cs" />
