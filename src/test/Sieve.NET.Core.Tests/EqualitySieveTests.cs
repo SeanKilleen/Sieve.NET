@@ -382,7 +382,12 @@ namespace Sieve.NET.Core.Tests
                 [Fact]
                 public void WhenNoValuesExist_AddsValues()
                 {
-                    throw new NotImplementedException();
+                    var listOfValues = new List<int> { 1, 2, 3 };
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                        .ForAdditionalValues(listOfValues);
+
+                    sut.AcceptableValues.Should().BeEquivalentTo(listOfValues);
+
                 }
 
                 [Fact]
@@ -401,10 +406,9 @@ namespace Sieve.NET.Core.Tests
                 }
 
                 [Fact]
-                public void WhenValueExists_AddsAdditionalValue()
+                public void WhenValueListExists_AddsAdditionalValueList()
                 {
                     throw new NotImplementedException();
-
                 }
             }
         }

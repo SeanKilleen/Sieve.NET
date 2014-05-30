@@ -303,5 +303,10 @@ namespace Sieve.NET.Core.Sieves
             return this;
         }
 
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValues(IEnumerable<TPropertyType> listOfValues)
+        {
+            _knownAcceptableValues.AddRange(listOfValues);
+            return this;
+        }
     }
 }
