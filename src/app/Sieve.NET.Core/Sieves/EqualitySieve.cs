@@ -171,12 +171,14 @@ namespace Sieve.NET.Core.Sieves
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValue(TPropertyType acceptableValue)
         {
+            this.ClearPotentialValuesLists();
             _knownAcceptableValues = new List<TPropertyType> {acceptableValue};
             return this;
         }
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValue(string stringValue)
         {
+            this.ClearPotentialValuesLists();
             _potentiallyAcceptableValues = new List<string>{stringValue};
             return this;
         }
@@ -257,15 +259,24 @@ namespace Sieve.NET.Core.Sieves
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(IEnumerable<TPropertyType> acceptableValues)
         {
+            ClearPotentialValuesLists();
             List<TPropertyType> acceptableValuesList = acceptableValues.ToList();
 
             acceptableValuesList.ForEach(x=> _knownAcceptableValues.Add(x));
 
             return this;
         }
+
+        private void ClearPotentialValuesLists()
+        {
+            _knownAcceptableValues = new List<TPropertyType>();
+            _potentiallyAcceptableValues = new List<string>();
+            _potentiallyAcceptableValuesToParse = new List<string>();
+        }
+
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(IEnumerable<string> acceptableValues)
         {
-            
+            this.ClearPotentialValuesLists();
             var acceptableValuesList = acceptableValues.ToList();
 
             _potentiallyAcceptableValues.AddRange(acceptableValuesList.Where(x=>!string.IsNullOrWhiteSpace(x)));
@@ -275,6 +286,7 @@ namespace Sieve.NET.Core.Sieves
 
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(string valuesListToParse)
         {
+            this.ClearPotentialValuesLists();
             _potentiallyAcceptableValuesToParse.Add(valuesListToParse);
 
             return this;
