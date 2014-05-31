@@ -20,50 +20,16 @@ namespace Sieve.NET.Core.Tests
     public class EqualitySieveTests
     {
         private static readonly ABusinessObject ABusinessObjectWithAnIntOf1 = new ABusinessObject { AnInt = 1 };
-
         private static readonly ABusinessObject ABusinessObjectWithAnIntOf2 = new ABusinessObject { AnInt = 2 };
-
         private static readonly ABusinessObject ABusinessObjectWithAnIntOf3 = new ABusinessObject { AnInt = 3 };
 
-        private static readonly ABusinessObject ABusinessObjectWithAStringOfOne = new ABusinessObject
-                                                                                  {
-                                                                                      AString = "One"
-                                                                                  };
+        private static readonly ABusinessObject ABusinessObjectWithAStringOfOne = new ABusinessObject { AString = "One" };
+        private static readonly ABusinessObject ABusinessObjectWithAStringOfTwo = new ABusinessObject { AString = "Two" };
+        private static readonly ABusinessObject ABusinessObjectWithAStringOfThree = new ABusinessObject { AString = "Three" };
 
-        private static readonly ABusinessObject ABusinessObjectWithAStringOfTwo = new ABusinessObject
-                                                                                  {
-                                                                                      AString = "Two"
-                                                                                  };
-
-        private static readonly ABusinessObject ABusinessObjectWithAStringOfThree = new ABusinessObject
-                                                                                    {
-                                                                                        AString =
-                                                                                            "Three"
-                                                                                    };
-
-        private static readonly ABusinessObject ABusinessObjectFor2010725 = new ABusinessObject
-                                                                            {
-                                                                                ADateTime =
-                                                                                    new DateTime(
-                                                                                    2010,
-                                                                                    7,
-                                                                                    25)
-                                                                            };
-
-        private static readonly ABusinessObject ABusinessObjectFor2014526 = new ABusinessObject
-                                                                            {
-                                                                                ADateTime =
-                                                                                    new DateTime(
-                                                                                    2014,
-                                                                                    5,
-                                                                                    26)
-                                                                            };
-
-        private static readonly ABusinessObject ABusinessObjectForTodaysDate = new ABusinessObject
-                                                                               {
-                                                                                   ADateTime =
-                                                                                       DateTime.Now
-                                                                               };
+        private static readonly ABusinessObject ABusinessObjectFor2010725 = new ABusinessObject { ADateTime = new DateTime(2010, 7, 25) };
+        private static readonly ABusinessObject ABusinessObjectFor2014526 = new ABusinessObject { ADateTime = new DateTime(2014, 5, 26) };
+        private static readonly ABusinessObject ABusinessObjectForTodaysDate = new ABusinessObject{ADateTime =DateTime.Now};
 
         public class ToExpressionTests
         {
