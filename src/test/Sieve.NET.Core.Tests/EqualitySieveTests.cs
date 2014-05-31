@@ -470,10 +470,7 @@ namespace Sieve.NET.Core.Tests
             public void PlaysNiceWithForValue_UsingStrings()
             {
                 var expectedValues = new List<int> { 1, 2, 3 };
-                var sut = new EqualitySieve<ABusinessObject>()
-                    .ForProperty(x => x.AnInt)
-                    .ForValues("1, 2")
-                    .ForValue("3");
+                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ForValues("1, 2").ForValue("3");
 
                 sut.AcceptableValues.ShouldBeEquivalentTo(expectedValues);
             }
@@ -482,10 +479,8 @@ namespace Sieve.NET.Core.Tests
             public void PlaysNiceWithForValue_UsingPropertyOfT()
             {
                 var expectedValues = new List<int> { 1, 2, 3 };
-                var sut = new EqualitySieve<ABusinessObject>()
-                    .ForProperty(x => x.AnInt)
-                    .ForValues(new[]{1,2})
-                    .ForValue(3);
+                var sut =
+                    new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ForValues(new[] { 1, 2 }).ForValue(3);
 
                 sut.AcceptableValues.ShouldBeEquivalentTo(expectedValues);
             }
@@ -703,8 +698,9 @@ namespace Sieve.NET.Core.Tests
 
                 }
             }
+        }
 
-            public class WithSeparatorTests
+        public class WithSeparatorTests
             {
                 [Fact]
                 public void GivenSeparator_ChangesSeparator()
@@ -918,4 +914,3 @@ namespace Sieve.NET.Core.Tests
             }
         }
     }
-}
