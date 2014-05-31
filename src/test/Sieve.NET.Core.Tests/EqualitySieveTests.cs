@@ -481,7 +481,13 @@ namespace Sieve.NET.Core.Tests
             [Fact]
             public void PlaysNiceWithForValue_UsingPropertyOfT()
             {
-                throw new NotImplementedException();
+                var expectedValues = new List<int> { 1, 2, 3 };
+                var sut = new EqualitySieve<ABusinessObject>()
+                    .ForProperty(x => x.AnInt)
+                    .ForValues(new[]{1,2})
+                    .ForValue(3);
+
+                sut.AcceptableValues.ShouldBeEquivalentTo(expectedValues);
             }
 
 
