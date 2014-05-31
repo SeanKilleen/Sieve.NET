@@ -180,6 +180,22 @@ namespace Sieve.NET.Core.Tests
 
             }
 
+            [Fact]
+            public void PlaysNicelyWithForValues_UsingStrings()
+            {
+                var expectedValues = new List<int> { 1, 2, 3 };
+
+                
+
+                throw new NotImplementedException();
+            }
+
+            [Fact]
+            public void PlaysNicelyWithForValues_UsingPropertyOfT()
+            {
+                throw new NotImplementedException();
+            }
+
             public class ASingleStringTests
             {
                 [Fact]
@@ -450,6 +466,19 @@ namespace Sieve.NET.Core.Tests
 
         public class ForValuesTests
         {
+            [Fact]
+            public void PlaysNiceWithForValue_UsingStrings()
+            {
+                throw new NotImplementedException();
+            }
+
+            [Fact]
+            public void PlaysNiceWithForValue_UsingPropertyOfT()
+            {
+                throw new NotImplementedException();
+            }
+
+
             public class EnumerableOfPropertyTypeTests
             {
                 [Fact]
