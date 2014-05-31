@@ -20,16 +20,50 @@ namespace Sieve.NET.Core.Tests
     public class EqualitySieveTests
     {
         private static readonly ABusinessObject ABusinessObjectWithAnIntOf1 = new ABusinessObject { AnInt = 1 };
+
         private static readonly ABusinessObject ABusinessObjectWithAnIntOf2 = new ABusinessObject { AnInt = 2 };
+
         private static readonly ABusinessObject ABusinessObjectWithAnIntOf3 = new ABusinessObject { AnInt = 3 };
 
-        private static readonly ABusinessObject ABusinessObjectWithAStringOfOne = new ABusinessObject { AString = "One" };
-        private static readonly ABusinessObject ABusinessObjectWithAStringOfTwo = new ABusinessObject { AString = "Two" };
-        private static readonly ABusinessObject ABusinessObjectWithAStringOfThree = new ABusinessObject { AString = "Three" };
+        private static readonly ABusinessObject ABusinessObjectWithAStringOfOne = new ABusinessObject
+                                                                                  {
+                                                                                      AString = "One"
+                                                                                  };
 
-        private static readonly ABusinessObject ABusinessObjectFor2010725 = new ABusinessObject { ADateTime = new DateTime(2010, 7, 25) };
-        private static readonly ABusinessObject ABusinessObjectFor2014526 = new ABusinessObject { ADateTime = new DateTime(2014, 5, 26) };
-        private static readonly ABusinessObject ABusinessObjectForTodaysDate = new ABusinessObject { ADateTime = DateTime.Now };
+        private static readonly ABusinessObject ABusinessObjectWithAStringOfTwo = new ABusinessObject
+                                                                                  {
+                                                                                      AString = "Two"
+                                                                                  };
+
+        private static readonly ABusinessObject ABusinessObjectWithAStringOfThree = new ABusinessObject
+                                                                                    {
+                                                                                        AString =
+                                                                                            "Three"
+                                                                                    };
+
+        private static readonly ABusinessObject ABusinessObjectFor2010725 = new ABusinessObject
+                                                                            {
+                                                                                ADateTime =
+                                                                                    new DateTime(
+                                                                                    2010,
+                                                                                    7,
+                                                                                    25)
+                                                                            };
+
+        private static readonly ABusinessObject ABusinessObjectFor2014526 = new ABusinessObject
+                                                                            {
+                                                                                ADateTime =
+                                                                                    new DateTime(
+                                                                                    2014,
+                                                                                    5,
+                                                                                    26)
+                                                                            };
+
+        private static readonly ABusinessObject ABusinessObjectForTodaysDate = new ABusinessObject
+                                                                               {
+                                                                                   ADateTime =
+                                                                                       DateTime.Now
+                                                                               };
 
         public class ToExpressionTests
         {
@@ -52,7 +86,8 @@ namespace Sieve.NET.Core.Tests
             [Fact]
             public void ToCompiledExpression_ReturnsCompiledExpression()
             {
-                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ForValue(1).ToCompiledExpression();
+                var sut =
+                    new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ForValue(1).ToCompiledExpression();
 
                 sut.Invoke(ABusinessObjectWithAnIntOf1).Should().BeTrue();
                 sut.Invoke(ABusinessObjectWithAnIntOf2).Should().BeFalse();
@@ -97,8 +132,7 @@ namespace Sieve.NET.Core.Tests
                 public void ForProperty_WithExpression_SetsProperty()
                 {
                     const string PROPERTY_NAME = "AnInt";
-                    var sut = new EqualitySieve<ABusinessObject>()
-                        .ForProperty(x => x.AnInt);
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt);
 
                     sut.PropertyToFilter.Name.Should().Be(PROPERTY_NAME);
 
@@ -112,9 +146,11 @@ namespace Sieve.NET.Core.Tests
             [Fact]
             public void ForValue_DoesntDoAnythingAtFirst()
             {
-                Action act = () => new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                        .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException)
-                        .ForValue("3abc");
+                Action act =
+                    () =>
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException)
+                            .ForValue("3abc");
 
                 act.ShouldNotThrow<InvalidSieveValueException>(); // shouldn't throw because we don't care about it yet.
             }
@@ -128,8 +164,8 @@ namespace Sieve.NET.Core.Tests
                 {
                     sieve =
                         new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                        .ForValue("1abc")
-                        .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException);
+                            .ForValue("1abc")
+                            .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException);
                 };
 
                 actCreateSieve.Invoke();
@@ -142,7 +178,9 @@ namespace Sieve.NET.Core.Tests
                 };
 
                 actCreateSieve.ShouldNotThrow<InvalidSieveValueException>();
-                actGetAcceptableValues.ShouldThrow<InvalidSieveValueException>().And.Message.Should().ContainEquivalentOf("1abc");
+                actGetAcceptableValues.ShouldThrow<InvalidSieveValueException>()
+                    .And.Message.Should()
+                    .ContainEquivalentOf("1abc");
 
 
             }
@@ -156,8 +194,8 @@ namespace Sieve.NET.Core.Tests
                 {
                     sieve =
                         new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                        .ForValue("1abc")
-                        .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException);
+                            .ForValue("1abc")
+                            .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException);
                 };
 
                 actCreateSieve.Invoke();
@@ -170,7 +208,9 @@ namespace Sieve.NET.Core.Tests
                 };
 
                 actCreateSieve.ShouldNotThrow<InvalidSieveValueException>();
-                actGetAcceptableValues.ShouldThrow<InvalidSieveValueException>().And.Message.Should().ContainEquivalentOf("1abc");
+                actGetAcceptableValues.ShouldThrow<InvalidSieveValueException>()
+                    .And.Message.Should()
+                    .ContainEquivalentOf("1abc");
 
             }
 
@@ -181,19 +221,21 @@ namespace Sieve.NET.Core.Tests
                 {
                     const int ACCEPTABLE_VALUE = 1;
                     string acceptableValueInStringform = ACCEPTABLE_VALUE.ToString(CultureInfo.InvariantCulture);
-                    
+
                     const string UNACCEPTABLE_VALUE = "1abc";
                     var expectedFinalList = new List<int> { ACCEPTABLE_VALUE };
 
-                    var sut = new EqualitySieve<ABusinessObject>()
-                        .ForProperty(x => x.AnInt)
-                        .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException)
-                        .ForValue(UNACCEPTABLE_VALUE);
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException)
+                            .ForValue(UNACCEPTABLE_VALUE);
 
                     // ReSharper disable once UnusedVariable -- used in deferred action
                     Action act = () => { var values = sut.AcceptableValues; };
 
-                    act.ShouldThrow<InvalidSieveValueException>().And.Message.Should().ContainEquivalentOf(UNACCEPTABLE_VALUE);
+                    act.ShouldThrow<InvalidSieveValueException>()
+                        .And.Message.Should()
+                        .ContainEquivalentOf(UNACCEPTABLE_VALUE);
 
                     sut.ForValue(acceptableValueInStringform);
 
@@ -206,8 +248,7 @@ namespace Sieve.NET.Core.Tests
                     var expectedValuesFirstTime = new List<int> { 1 };
                     var expectedValuesSecondTime = new List<int> { 2 };
 
-                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                        .ForValue("1");
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ForValue("1");
 
                     sut.AcceptableValues.Should().BeEquivalentTo(expectedValuesFirstTime);
 
@@ -227,7 +268,9 @@ namespace Sieve.NET.Core.Tests
                 }
 
                 [Fact]
-                public void WithInvalidValue_AndInvalidValueBehaviorSetToThrowException_ExceptionIsThrownWhenAcceptableValuesIsCalled()
+                public void
+                    WithInvalidValue_AndInvalidValueBehaviorSetToThrowException_ExceptionIsThrownWhenAcceptableValuesIsCalled
+                    ()
                 {
                     var sieve =
                         new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
@@ -242,7 +285,9 @@ namespace Sieve.NET.Core.Tests
                 }
 
                 [Fact]
-                public void WithInvalidValue_AndInvalidValueBehaviorSetToThrowException_ExceptionIsThrownWhenToExpressionIsCalled()
+                public void
+                    WithInvalidValue_AndInvalidValueBehaviorSetToThrowException_ExceptionIsThrownWhenToExpressionIsCalled
+                    ()
                 {
                     var sieve =
                         new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
@@ -261,9 +306,7 @@ namespace Sieve.NET.Core.Tests
                 {
                     const string STRING_TO_TEST = "Hello World";
 
-                    var sut = new EqualitySieve<ABusinessObject>()
-                        .ForProperty(x => x.AString)
-                        .ForValue(STRING_TO_TEST);
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AString).ForValue(STRING_TO_TEST);
 
                     var expectedList = new List<string> { STRING_TO_TEST };
                     sut.AcceptableValues.Should().BeEquivalentTo(expectedList);
@@ -301,8 +344,7 @@ namespace Sieve.NET.Core.Tests
                     var expectedValuesFirstTime = new List<int> { 1 };
                     var expectedValuesSecondTime = new List<int> { 2 };
 
-                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                        .ForValue(1);
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ForValue(1);
 
                     sut.AcceptableValues.Should().BeEquivalentTo(expectedValuesFirstTime);
 
@@ -311,6 +353,7 @@ namespace Sieve.NET.Core.Tests
                     sut.AcceptableValues.Should().BeEquivalentTo(expectedValuesSecondTime);
 
                 }
+
                 [Fact]
                 public void SingleItemOfPropertyType_SetsAcceptableValuesList()
                 {
@@ -332,8 +375,7 @@ namespace Sieve.NET.Core.Tests
                 public void WhenNoValueExists_AddsValue()
                 {
                     var expectedValues = new List<int> { 1 };
-                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                        .ForAdditionalValue(1);
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ForAdditionalValue(1);
 
                     sut.AcceptableValues.Should().BeEquivalentTo(expectedValues);
                 }
@@ -342,8 +384,8 @@ namespace Sieve.NET.Core.Tests
                 public void WhenValueExists_AddsAdditionalValue()
                 {
                     var expectedValues = new List<int> { 1, 2 };
-                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                        .ForValue(1).ForAdditionalValue(2);
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ForValue(1).ForAdditionalValue(2);
 
                     sut.AcceptableValues.Should().BeEquivalentTo(expectedValues);
                 }
@@ -355,8 +397,10 @@ namespace Sieve.NET.Core.Tests
                 public void WhenNoValueExists_AddsValue()
                 {
                     var expectedValues = new List<int> { 1, 2 };
-                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                        .ForValue("1").ForAdditionalValue("2");
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValue("1")
+                            .ForAdditionalValue("2");
 
                     sut.AcceptableValues.Should().BeEquivalentTo(expectedValues);
 
@@ -366,8 +410,7 @@ namespace Sieve.NET.Core.Tests
                 public void WhenValueExists_AddsAdditionalValue()
                 {
                     var expectedValues = new List<int> { 1 };
-                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                        .ForAdditionalValue("1");
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ForAdditionalValue("1");
 
                     sut.AcceptableValues.Should().BeEquivalentTo(expectedValues);
                 }
@@ -378,14 +421,14 @@ namespace Sieve.NET.Core.Tests
 
         public class ForAdditionalValuesTests
         {
-                public class TPropertyTypeTests
+            public class TPropertyTypeTests
             {
                 [Fact]
                 public void WhenNoValuesExist_AddsValues()
                 {
                     var listOfValues = new List<int> { 1, 2, 3 };
-                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                        .ForAdditionalValues(listOfValues);
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ForAdditionalValues(listOfValues);
 
                     sut.AcceptableValues.Should().BeEquivalentTo(listOfValues);
 
@@ -398,11 +441,11 @@ namespace Sieve.NET.Core.Tests
                     var additionalValues = new List<int> { 4, 5, 6 };
 
                     var fullList = listOfValues.ToList().Union(additionalValues);
-                    
-                    var sut = new EqualitySieve<ABusinessObject>()
-                        .ForProperty(x => x.AnInt)
-                        .ForValues(listOfValues)
-                        .ForAdditionalValues(additionalValues);
+
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValues(listOfValues)
+                            .ForAdditionalValues(additionalValues);
 
                     sut.AcceptableValues.Should().BeEquivalentTo(fullList);
                 }
@@ -414,9 +457,8 @@ namespace Sieve.NET.Core.Tests
                 public void WhenNoValueListsExist_AddsValues()
                 {
                     var listOfValues = new List<int> { 1, 2, 3 };
-                    var sut = new EqualitySieve<ABusinessObject>()
-                        .ForProperty(x => x.AnInt)
-                        .ForAdditionalValues("1, 2, 3");
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ForAdditionalValues("1, 2, 3");
 
                     sut.AcceptableValues.Should().BeEquivalentTo(listOfValues);
                 }
@@ -429,10 +471,10 @@ namespace Sieve.NET.Core.Tests
 
                     var fullList = listOfValues.ToList().Union(additionalValues);
 
-                    var sut = new EqualitySieve<ABusinessObject>()
-                        .ForProperty(x => x.AnInt)
-                        .ForValues("1, 2, 3")
-                        .ForAdditionalValues("4, 5, 6");
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValues("1, 2, 3")
+                            .ForAdditionalValues("4, 5, 6");
 
                     sut.AcceptableValues.Should().BeEquivalentTo(fullList);
 
@@ -496,13 +538,15 @@ namespace Sieve.NET.Core.Tests
                 }
 
                 [Fact]
-                public void WithEntryContainingInvalidValue_AndInvalidValueBehaviorSetToThrowException_ExceptionIsThrownWhenCallingAcceptableValues()
+                public void
+                    WithEntryContainingInvalidValue_AndInvalidValueBehaviorSetToThrowException_ExceptionIsThrownWhenCallingAcceptableValues
+                    ()
                 {
 
-                    var sieve = new EqualitySieve<ABusinessObject>()
-                        .ForProperty(x => x.AnInt)
-                        .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException)
-                        .ForValues("1, 2abc");
+                    var sieve =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException)
+                            .ForValues("1, 2abc");
 
                     // ReSharper disable once UnusedVariable -- used for purposes of this action only
                     Action act = () => { var sut = sieve.AcceptableValues; };
@@ -512,13 +556,15 @@ namespace Sieve.NET.Core.Tests
                 }
 
                 [Fact]
-                public void WithEntryContainingInvalidValue_AndInvalidValueBehaviorSetToThrowException_ExceptionIsThrownWhenCallingToExpression()
+                public void
+                    WithEntryContainingInvalidValue_AndInvalidValueBehaviorSetToThrowException_ExceptionIsThrownWhenCallingToExpression
+                    ()
                 {
 
-                    var sieve = new EqualitySieve<ABusinessObject>()
-                        .ForProperty(x => x.AnInt)
-                        .ForValues("1, 2abc")
-                        .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException);
+                    var sieve =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValues("1, 2abc")
+                            .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException);
 
                     // ReSharper disable once UnusedVariable -- used for purposes of this action only
                     Action act = () => { var sut = sieve.ToExpression(); };
@@ -563,9 +609,9 @@ namespace Sieve.NET.Core.Tests
                 {
                     var valuesToTry = new List<DateTime> { new DateTime(2010, 7, 25), new DateTime(2014, 5, 26) };
 
-                    var sut = new EqualitySieve<ABusinessObject>()
-                        .ForProperty(x => x.ADateTime)
-                        .ForValues("7/25/2010, 5/26/2014");
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime)
+                            .ForValues("7/25/2010, 5/26/2014");
 
                     sut.AcceptableValues.Should().BeEquivalentTo(valuesToTry);
 
@@ -604,200 +650,264 @@ namespace Sieve.NET.Core.Tests
                     compiled.Invoke(ABusinessObjectWithAnIntOf3).Should().BeTrue();
                 }
             }
-        }
 
-        public class WithSeparatorTests
-        {
-            [Fact]
-            public void GivenSeparator_ChangesSeparator()
+            public class EnumerableOfStringTests
             {
-                var separatorString = new List<string> { "|" };
-                var sut = new EqualitySieve<ABusinessObject>()
-                    .ForProperty(x => x.AnInt)
-                    .WithSeparator("|");
-                sut.Separators.ShouldBeEquivalentTo(separatorString);
+                [Fact]
+                public void ListOfIntStrings_BecomesListOfAcceptableValues()
+                {
+                    var stringValuesToTry = new List<string> { "1", "3" };
+                    var valuesToTry = new List<int> { 1, 3 };
+
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                        .ForValues(stringValuesToTry);
+                    sut.AcceptableValues.Should().BeEquivalentTo(valuesToTry);
+
+                    var compiled = sut.ToCompiledExpression();
+                    compiled.Invoke(ABusinessObjectWithAnIntOf1).Should().BeTrue();
+                    compiled.Invoke(ABusinessObjectWithAnIntOf2).Should().BeFalse();
+                    compiled.Invoke(ABusinessObjectWithAnIntOf3).Should().BeTrue();
+                }
+
+                [Fact]
+                public void ArrayOfStringInts_BecomesListOfAcceptableValues()
+                {
+                    var valuesToTry = new[] { 1, 3 };
+                    var stringValuesToTry = new[] { "1", "3" };
+
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                        .ForValues(stringValuesToTry);
+                    sut.AcceptableValues.Should().BeEquivalentTo(valuesToTry);
+                }
+
+                [Fact]
+                public void ListOfStrings_BecomesListOfAcceptableStringValues()
+                {
+                    var valuesToTry = new[] { "One", "Three" };
+
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AString).ForValues(valuesToTry);
+                    sut.AcceptableValues.Should().BeEquivalentTo(valuesToTry);
+
+                    var compiled = sut.ToCompiledExpression();
+
+                    compiled.Invoke(ABusinessObjectWithAStringOfOne).Should().BeTrue();
+                    compiled.Invoke(ABusinessObjectWithAStringOfTwo).Should().BeFalse();
+                    compiled.Invoke(ABusinessObjectWithAStringOfThree).Should().BeTrue();
+
+                }
             }
 
-            [Theory]
-            [InlineData(null)]
-            [InlineData("")]
-            [InlineData("    ")]
-            public void GivenEmptySeparator_DoesntChangeSeparator(string separatorToTry)
+            public class WithSeparatorTests
             {
-                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt);
+                [Fact]
+                public void GivenSeparator_ChangesSeparator()
+                {
+                    var separatorString = new List<string> { "|" };
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).WithSeparator("|");
+                    sut.Separators.ShouldBeEquivalentTo(separatorString);
+                }
 
-                var currentSeparator = sut.Separators;
+                [Theory]
+                [InlineData(null)]
+                [InlineData("")]
+                [InlineData("    ")]
+                public void GivenEmptySeparator_DoesntChangeSeparator(string separatorToTry)
+                {
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt);
 
-                sut = sut.WithSeparator(separatorToTry);
+                    var currentSeparator = sut.Separators;
 
-                sut.Separators.ShouldBeEquivalentTo(currentSeparator);
+                    sut = sut.WithSeparator(separatorToTry);
+
+                    sut.Separators.ShouldBeEquivalentTo(currentSeparator);
+                }
+
+                [Fact]
+                public void WhenChangingSeparator_AcceptableValuesUseNewSeparator()
+                {
+                    var expectedList = new List<int> { 1, 2, 3 };
+
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .WithSeparator("|")
+                            .ForValues("1 |2  | 3");
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expectedList);
+                }
             }
 
-            [Fact]
-            public void WhenChangingSeparator_AcceptableValuesUseNewSeparator()
+            public class WithSeparatorsTests
             {
-                var expectedList = new List<int> { 1, 2, 3 };
+                [Fact]
+                public void GivenSeparators_ChangesSeparators()
+                {
+                    var separatorString = new List<string> { "|", "," };
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).WithSeparators(separatorString);
+                    sut.Separators.ShouldBeEquivalentTo(separatorString);
+                }
 
-                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).WithSeparator("|").ForValues("1 |2  | 3");
+                [Fact]
+                public void GivenNullList_DoesntChangeSeparator()
+                {
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt);
 
-                sut.AcceptableValues.ShouldBeEquivalentTo(expectedList);
-            }
-        }
+                    var currentSeparators = sut.Separators;
 
-        public class WithSeparatorsTests
-        {
-            [Fact]
-            public void GivenSeparators_ChangesSeparators()
-            {
-                var separatorString = new List<string> { "|", "," };
-                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                    .WithSeparators(separatorString);
-                sut.Separators.ShouldBeEquivalentTo(separatorString);
-            }
+                    sut = sut.WithSeparators(null);
 
-            [Fact]
-            public void GivenNullList_DoesntChangeSeparator()
-            {
-                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt);
+                    sut.Separators.ShouldBeEquivalentTo(currentSeparators);
+                }
 
-                var currentSeparators = sut.Separators;
+                [Fact]
+                public void GivenEmptyList_DoesntChangeSeparator()
+                {
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt);
 
-                sut = sut.WithSeparators(null);
+                    var currentSeparators = sut.Separators;
 
-                sut.Separators.ShouldBeEquivalentTo(currentSeparators);
-            }
+                    sut = sut.WithSeparators(new List<string>());
 
-            [Fact]
-            public void GivenEmptyList_DoesntChangeSeparator()
-            {
-                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt);
+                    sut.Separators.ShouldBeEquivalentTo(currentSeparators);
+                }
 
-                var currentSeparators = sut.Separators;
+                [Fact]
+                public void WhenChangingSeparators_AcceptableValuesUseAllNewSeparators()
+                {
+                    var expectedList = new List<int> { 1, 2, 3 };
 
-                sut = sut.WithSeparators(new List<string>());
+                    var separators = new List<string> { "|", "," };
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .WithSeparators(separators)
+                            .ForValues("1 ,2  | 3");
 
-                sut.Separators.ShouldBeEquivalentTo(currentSeparators);
-            }
-
-            [Fact]
-            public void WhenChangingSeparators_AcceptableValuesUseAllNewSeparators()
-            {
-                var expectedList = new List<int> { 1, 2, 3 };
-
-                var separators = new List<string> { "|", "," };
-                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                    .WithSeparators(separators).ForValues("1 ,2  | 3");
-
-                sut.AcceptableValues.ShouldBeEquivalentTo(expectedList);
-            }
-
-        }
-
-        public class WithEmptyValuesBehaviorTests
-        {
-            [Fact]
-            public void DefaultBehaviorIsToLetAllThrough()
-            {
-                //no values defined
-                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ToCompiledExpression();
-
-                sut.Invoke(ABusinessObjectWithAnIntOf1).Should().BeTrue();
-                sut.Invoke(ABusinessObjectWithAnIntOf2).Should().BeTrue();
-                sut.Invoke(ABusinessObjectWithAnIntOf3).Should().BeTrue();
-            }
-
-            [Fact]
-            public void WithLetNoneThroughOption_DoesntAllowAnyThrough()
-            {
-                //no values defined
-                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                    .WithEmptyValuesListBehavior(EmptyValuesListBehavior.LetNoObjectsThrough).ToCompiledExpression();
-
-                sut.Invoke(ABusinessObjectWithAnIntOf1).Should().BeFalse();
-                sut.Invoke(ABusinessObjectWithAnIntOf2).Should().BeFalse();
-                sut.Invoke(ABusinessObjectWithAnIntOf3).Should().BeFalse();
-            }
-
-            [Fact]
-            public void WithThrowExceptionOption_ThrowsANoSieveValuesSuppliedException()
-            {
-                //no values defined
-                Action act = () => new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
-                    .WithEmptyValuesListBehavior(EmptyValuesListBehavior.ThrowSieveValuesNotFoundException)
-                    .ToCompiledExpression();
-
-                act.ShouldThrow<NoSieveValuesSuppliedException>();
-            }
-
-        }
-
-        public class WithInvalidValueBehaviorTests
-        {
-
-            [Fact]
-            public void WithoutCalling_InvalidValueBehaviorIsSetByDefaultToIgnore()
-            {
-                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime);
-
-                sut.InvalidValueBehavior.ShouldBeEquivalentTo(InvalidValueBehavior.IgnoreInvalidValue);
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expectedList);
+                }
 
             }
 
-            [Fact]
-            public void WithoutCalling_InvalidValuesAreIgnoredByDefault()
+            public class WithEmptyValuesBehaviorTests
             {
-                const string STRING_VALUES = "7/25/2010, 12/1abc/2012";
-                var expectedList = new List<DateTime> { new DateTime(2010, 7, 25) };
-                var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime).ForValues(STRING_VALUES);
+                [Fact]
+                public void DefaultBehaviorIsToLetAllThrough()
+                {
+                    //no values defined
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt).ToCompiledExpression();
 
-                sut.AcceptableValues.ShouldBeEquivalentTo(expectedList);
+                    sut.Invoke(ABusinessObjectWithAnIntOf1).Should().BeTrue();
+                    sut.Invoke(ABusinessObjectWithAnIntOf2).Should().BeTrue();
+                    sut.Invoke(ABusinessObjectWithAnIntOf3).Should().BeTrue();
+                }
+
+                [Fact]
+                public void WithLetNoneThroughOption_DoesntAllowAnyThrough()
+                {
+                    //no values defined
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .WithEmptyValuesListBehavior(EmptyValuesListBehavior.LetNoObjectsThrough)
+                            .ToCompiledExpression();
+
+                    sut.Invoke(ABusinessObjectWithAnIntOf1).Should().BeFalse();
+                    sut.Invoke(ABusinessObjectWithAnIntOf2).Should().BeFalse();
+                    sut.Invoke(ABusinessObjectWithAnIntOf3).Should().BeFalse();
+                }
+
+                [Fact]
+                public void WithThrowExceptionOption_ThrowsANoSieveValuesSuppliedException()
+                {
+                    //no values defined
+                    Action act =
+                        () =>
+                            new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                                .WithEmptyValuesListBehavior(EmptyValuesListBehavior.ThrowSieveValuesNotFoundException)
+                                .ToCompiledExpression();
+
+                    act.ShouldThrow<NoSieveValuesSuppliedException>();
+                }
+
             }
 
-            [Fact]
-            public void WhenSpecifyingItShouldbeIgnored_InvalidValuesAreIgnoredByDefault()
+            public class WithInvalidValueBehaviorTests
             {
-                const string STRING_VALUES = "7/25/2010, 12/1abc/2012";
 
-                var expectedList = new List<DateTime> { new DateTime(2010, 7, 25) };
+                [Fact]
+                public void WithoutCalling_InvalidValueBehaviorIsSetByDefaultToIgnore()
+                {
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime);
 
-                var sut =
-                    new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime)
-                        .WithInvalidValueBehavior(InvalidValueBehavior.IgnoreInvalidValue)
+                    sut.InvalidValueBehavior.ShouldBeEquivalentTo(InvalidValueBehavior.IgnoreInvalidValue);
+
+                }
+
+                [Fact]
+                public void WithoutCalling_InvalidValuesAreIgnoredByDefault()
+                {
+                    const string STRING_VALUES = "7/25/2010, 12/1abc/2012";
+                    var expectedList = new List<DateTime> { new DateTime(2010, 7, 25) };
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime)
                         .ForValues(STRING_VALUES);
 
-                sut.InvalidValueBehavior.ShouldBeEquivalentTo(InvalidValueBehavior.IgnoreInvalidValue);
-                sut.AcceptableValues.ShouldBeEquivalentTo(expectedList);
-            }
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expectedList);
+                }
 
-            [Fact]
-            public void WhenSpecifyingAnExceptionBeThrown_InvalidValueThrowsInvalidSieveValueExceptionWhenCallingAcceptableValues()
-            {
-                const string STRING_VALUES = "7/25/2010, 12/1abc/2012";
+                [Fact]
+                public void WhenSpecifyingItShouldbeIgnored_InvalidValuesAreIgnoredByDefault()
+                {
+                    const string STRING_VALUES = "7/25/2010, 12/1abc/2012";
 
-                var sieve = new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime)
-                    .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException)
-                    .ForValue(STRING_VALUES);
+                    var expectedList = new List<DateTime> { new DateTime(2010, 7, 25) };
 
-                // ReSharper disable once UnusedVariable -- used for purposes of this action only
-                Action act = () => { var sut = sieve.AcceptableValues; };
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime)
+                            .WithInvalidValueBehavior(InvalidValueBehavior.IgnoreInvalidValue)
+                            .ForValues(STRING_VALUES);
 
-                act.ShouldThrow<InvalidSieveValueException>().And.Message.Should().ContainEquivalentOf("12/1abc/2012");
+                    sut.InvalidValueBehavior.ShouldBeEquivalentTo(InvalidValueBehavior.IgnoreInvalidValue);
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expectedList);
+                }
 
-            }
+                [Fact]
+                public void
+                    WhenSpecifyingAnExceptionBeThrown_InvalidValueThrowsInvalidSieveValueExceptionWhenCallingAcceptableValues
+                    ()
+                {
+                    const string STRING_VALUES = "7/25/2010, 12/1abc/2012";
 
-            [Fact]
-            public void WhenSpecifyingAnExceptionBeThrown_InvalidValueThrowsInvalidSieveValueExceptionWhenCallingToExpression()
-            {
-                const string STRING_VALUES = "7/25/2010, 12/1abc/2012";
+                    var sieve =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime)
+                            .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException)
+                            .ForValue(STRING_VALUES);
 
-                var sieve = new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime)
-                    .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException)
-                    .ForValue(STRING_VALUES);
+                    // ReSharper disable once UnusedVariable -- used for purposes of this action only
+                    Action act = () => { var sut = sieve.AcceptableValues; };
 
-                // ReSharper disable once UnusedVariable -- used for purposes of this action only
-                Action act = () => { var sut = sieve.ToExpression(); };
+                    act.ShouldThrow<InvalidSieveValueException>()
+                        .And.Message.Should()
+                        .ContainEquivalentOf("12/1abc/2012");
 
-                act.ShouldThrow<InvalidSieveValueException>().And.Message.Should().ContainEquivalentOf("12/1abc/2012");
+                }
+
+                [Fact]
+                public void
+                    WhenSpecifyingAnExceptionBeThrown_InvalidValueThrowsInvalidSieveValueExceptionWhenCallingToExpression
+                    ()
+                {
+                    const string STRING_VALUES = "7/25/2010, 12/1abc/2012";
+
+                    var sieve =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.ADateTime)
+                            .WithInvalidValueBehavior(InvalidValueBehavior.ThrowInvalidSieveValueException)
+                            .ForValue(STRING_VALUES);
+
+                    // ReSharper disable once UnusedVariable -- used for purposes of this action only
+                    Action act = () => { var sut = sieve.ToExpression(); };
+
+                    act.ShouldThrow<InvalidSieveValueException>()
+                        .And.Message.Should()
+                        .ContainEquivalentOf("12/1abc/2012");
+                }
             }
         }
     }
