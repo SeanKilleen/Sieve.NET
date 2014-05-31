@@ -199,6 +199,12 @@ namespace Sieve.NET.Core.Tests
             public class ASingleStringTests
             {
                 [Fact]
+                public void ClearsOtherPotentialValueItems()
+                {
+                    throw new NotImplementedException();
+                }
+
+                [Fact]
                 public void CanBeCalledAgainToReplaceValueAfterFirstCausesAnError()
                 {
                     const int ACCEPTABLE_VALUE = 1;
@@ -320,6 +326,12 @@ namespace Sieve.NET.Core.Tests
 
             public class ItemOfPropertyTypeTests
             {
+                [Fact]
+                public void ClearsOtherPotentialValueItems()
+                {
+                    throw new NotImplementedException();
+                }
+
                 [Fact]
                 public void WhenCalled_ReplacesPreviousItems()
                 {
