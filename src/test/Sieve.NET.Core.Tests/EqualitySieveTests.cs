@@ -182,6 +182,7 @@ namespace Sieve.NET.Core.Tests
 
             public class ASingleStringTests
             {
+
                 [Fact]
                 public void ClearsOtherPotentialValueItems()
                 {
@@ -319,6 +320,7 @@ namespace Sieve.NET.Core.Tests
 
             public class ItemOfPropertyTypeTests
             {
+
                 [Fact]
                 public void ClearsOtherPotentialValueItems()
                 {
@@ -363,8 +365,40 @@ namespace Sieve.NET.Core.Tests
 
         public class ForAdditionalValueTests
         {
+            [Fact]
+            public void DoesNotAddDuplicateValues()
+            {
+                var expected = new List<int> { 1, 2, 3 };
+
+                var sut = new EqualitySieve<ABusinessObject>()
+                    .ForProperty(x => x.AnInt)
+                        .ForValue("1")
+                        .ForAdditionalValue("1")
+                        .ForAdditionalValue("2")
+                        .ForAdditionalValue("1")
+                        .ForAdditionalValue("3");
+
+                sut.AcceptableValues.ShouldBeEquivalentTo(expected);
+            }
+
             public class TPropertyTypeTests
             {
+                [Fact]
+                public void DoesNotAddDuplicateValues()
+                {
+                    var expected = new List<int> { 1, 2, 3 };
+
+                    var sut = new EqualitySieve<ABusinessObject>()
+                        .ForProperty(x => x.AnInt)
+                            .ForValue(1)
+                            .ForAdditionalValue(1)
+                            .ForAdditionalValue(2)
+                            .ForAdditionalValue(1)
+                            .ForAdditionalValue(3);
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expected);
+                }
+
                 [Fact]
                 public void PlaysNicelyWithForValue_TProperty()
                 {
@@ -550,6 +584,19 @@ namespace Sieve.NET.Core.Tests
             public class TPropertyTypeTests
             {
                 [Fact]
+                public void DoesNotAddDuplicateValues()
+                {
+                    var expected = new List<int> { 1, 2, 3 };
+
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValue("1")
+                            .ForAdditionalValues(new[] { 1, 1, 1, 2, 3 });
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expected);
+                }
+
+                [Fact]
                 public void PlaysNicelyWithForValue_TProperty()
                 {
                     var expected = new List<int> { 1, 2, 3 };
@@ -643,6 +690,19 @@ namespace Sieve.NET.Core.Tests
 
             public class Strings
             {
+                [Fact]
+                public void DoesNotAddDuplicateValues()
+                {
+                    var expected = new List<int> { 1, 2, 3 };
+
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValue("1")
+                            .ForAdditionalValues("1, 1, 2, 3");
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expected);
+                }
+
                 [Fact]
                 public void PlaysNicelyWithForValue_TProperty()
                 {
@@ -745,6 +805,18 @@ namespace Sieve.NET.Core.Tests
             public class EnumerableOfPropertyTypeTests
             {
                 [Fact]
+                public void DoesNotAddDuplicateValues()
+                {
+                    var expected = new List<int> { 1, 2, 3 };
+
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValues(new[] { 1, 1, 1, 2, 1, 3, 1 });
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expected);
+                }
+
+                [Fact]
                 public void ClearsOtherPotentialValues()
                 {
                     var expected = new List<int> { 5, 6 };
@@ -799,6 +871,18 @@ namespace Sieve.NET.Core.Tests
 
             public class SeparatedStringTests
             {
+                [Fact]
+                public void DoesNotAddDuplicateValues()
+                {
+                    var expected = new List<int> { 1, 2, 3 };
+
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValues("1, 1, 1, 2, 1, 3, 1");
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expected);
+                }
+
                 [Fact]
                 public void ClearsOtherPotentialValues()
                 {
@@ -939,6 +1023,18 @@ namespace Sieve.NET.Core.Tests
 
             public class EnumerableOfStringTests
             {
+                [Fact]
+                public void DoesNotAddDuplicateValues()
+                {
+                    var expected = new List<int> { 1, 2, 3 };
+
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValues(new[] { "1", "1", "1", "2", "1", "3", "1" });
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expected);
+                }
+
                 [Fact]
                 public void ClearsOtherPotentialValues()
                 {

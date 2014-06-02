@@ -70,7 +70,7 @@ namespace Sieve.NET.Core.Sieves
                 }
             }
 
-            return result;
+            return result.Distinct().ToList();
         }
 
         private void AddParsedItemsToPotentiallyAcceptableValues(List<string> parsedItems)
