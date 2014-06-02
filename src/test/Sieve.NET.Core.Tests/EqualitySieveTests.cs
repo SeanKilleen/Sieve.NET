@@ -368,7 +368,17 @@ namespace Sieve.NET.Core.Tests
             [Fact]
             public void DoesNotAddDuplicateValues()
             {
-                throw new NotImplementedException();
+                var expected = new List<int> { 1, 2, 3 };
+
+                var sut = new EqualitySieve<ABusinessObject>()
+                    .ForProperty(x => x.AnInt)
+                        .ForValue("1")
+                        .ForAdditionalValue("1")
+                        .ForAdditionalValue("2")
+                        .ForAdditionalValue("1")
+                        .ForAdditionalValue("3");
+
+                sut.AcceptableValues.ShouldBeEquivalentTo(expected);
             }
 
             public class TPropertyTypeTests
@@ -376,7 +386,17 @@ namespace Sieve.NET.Core.Tests
                 [Fact]
                 public void DoesNotAddDuplicateValues()
                 {
-                    throw new NotImplementedException();
+                    var expected = new List<int> { 1, 2, 3 };
+
+                    var sut = new EqualitySieve<ABusinessObject>()
+                        .ForProperty(x => x.AnInt)
+                            .ForValue(1)
+                            .ForAdditionalValue(1)
+                            .ForAdditionalValue(2)
+                            .ForAdditionalValue(1)
+                            .ForAdditionalValue(3);
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expected);
                 }
 
                 [Fact]
@@ -566,7 +586,14 @@ namespace Sieve.NET.Core.Tests
                 [Fact]
                 public void DoesNotAddDuplicateValues()
                 {
-                    throw new NotImplementedException();
+                    var expected = new List<int> { 1, 2, 3 };
+
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValue("1")
+                            .ForAdditionalValues(new[] { 1, 1, 1, 2, 3 });
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expected);
                 }
 
                 [Fact]
@@ -666,7 +693,14 @@ namespace Sieve.NET.Core.Tests
                 [Fact]
                 public void DoesNotAddDuplicateValues()
                 {
-                    throw new NotImplementedException();
+                    var expected = new List<int> { 1, 2, 3 };
+
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValue("1")
+                            .ForAdditionalValues("1, 1, 2, 3");
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expected);
                 }
 
                 [Fact]
@@ -773,7 +807,13 @@ namespace Sieve.NET.Core.Tests
                 [Fact]
                 public void DoesNotAddDuplicateValues()
                 {
-                    throw new NotImplementedException();
+                    var expected = new List<int> { 1, 2, 3 };
+
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValues(new[] { 1, 1, 1, 2, 1, 3, 1 });
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expected);
                 }
 
                 [Fact]
@@ -834,7 +874,13 @@ namespace Sieve.NET.Core.Tests
                 [Fact]
                 public void DoesNotAddDuplicateValues()
                 {
-                    throw new NotImplementedException();
+                    var expected = new List<int> { 1, 2, 3 };
+
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValues("1, 1, 1, 2, 1, 3, 1");
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expected);
                 }
 
                 [Fact]
@@ -980,7 +1026,13 @@ namespace Sieve.NET.Core.Tests
                 [Fact]
                 public void DoesNotAddDuplicateValues()
                 {
-                    throw new NotImplementedException();
+                    var expected = new List<int> { 1, 2, 3 };
+
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForValues(new[] { "1", "1", "1", "2", "1", "3", "1" });
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expected);
                 }
 
                 [Fact]
