@@ -182,6 +182,7 @@ namespace Sieve.NET.Core.Tests
 
             public class ASingleStringTests
             {
+
                 [Fact]
                 public void ClearsOtherPotentialValueItems()
                 {
@@ -319,6 +320,7 @@ namespace Sieve.NET.Core.Tests
 
             public class ItemOfPropertyTypeTests
             {
+
                 [Fact]
                 public void ClearsOtherPotentialValueItems()
                 {
@@ -363,8 +365,20 @@ namespace Sieve.NET.Core.Tests
 
         public class ForAdditionalValueTests
         {
+            [Fact]
+            public void DoesNotAddDuplicateValues()
+            {
+                throw new NotImplementedException();
+            }
+
             public class TPropertyTypeTests
             {
+                [Fact]
+                public void DoesNotAddDuplicateValues()
+                {
+                    throw new NotImplementedException();
+                }
+
                 [Fact]
                 public void PlaysNicelyWithForValue_TProperty()
                 {
@@ -550,6 +564,12 @@ namespace Sieve.NET.Core.Tests
             public class TPropertyTypeTests
             {
                 [Fact]
+                public void DoesNotAddDuplicateValues()
+                {
+                    throw new NotImplementedException();
+                }
+
+                [Fact]
                 public void PlaysNicelyWithForValue_TProperty()
                 {
                     var expected = new List<int> { 1, 2, 3 };
@@ -643,6 +663,12 @@ namespace Sieve.NET.Core.Tests
 
             public class Strings
             {
+                [Fact]
+                public void DoesNotAddDuplicateValues()
+                {
+                    throw new NotImplementedException();
+                }
+
                 [Fact]
                 public void PlaysNicelyWithForValue_TProperty()
                 {
@@ -745,6 +771,12 @@ namespace Sieve.NET.Core.Tests
             public class EnumerableOfPropertyTypeTests
             {
                 [Fact]
+                public void DoesNotAddDuplicateValues()
+                {
+                    throw new NotImplementedException();
+                }
+
+                [Fact]
                 public void ClearsOtherPotentialValues()
                 {
                     var expected = new List<int> { 5, 6 };
@@ -799,6 +831,12 @@ namespace Sieve.NET.Core.Tests
 
             public class SeparatedStringTests
             {
+                [Fact]
+                public void DoesNotAddDuplicateValues()
+                {
+                    throw new NotImplementedException();
+                }
+
                 [Fact]
                 public void ClearsOtherPotentialValues()
                 {
@@ -939,6 +977,12 @@ namespace Sieve.NET.Core.Tests
 
             public class EnumerableOfStringTests
             {
+                [Fact]
+                public void DoesNotAddDuplicateValues()
+                {
+                    throw new NotImplementedException();
+                }
+
                 [Fact]
                 public void ClearsOtherPotentialValues()
                 {
