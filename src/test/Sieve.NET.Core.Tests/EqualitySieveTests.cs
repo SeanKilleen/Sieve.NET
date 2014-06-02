@@ -581,6 +581,66 @@ namespace Sieve.NET.Core.Tests
 
         public class ForAdditionalValuesTests
         {
+            public class EnumerableOfStringTests
+            {
+                [Fact]
+                public void DoesNotAddDuplicateValues()
+                {
+                    var expected = new List<int> { 1, 2, 3 };
+
+                    var sut =
+                        new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                            .ForAdditionalValues(new[] { "1", "1", "1", "2", "1", "3", "1" });
+
+                    sut.AcceptableValues.ShouldBeEquivalentTo(expected);
+                }
+
+                [Fact]
+                public void ListOfIntStrings_BecomesListOfAcceptableValues()
+                {
+                    var stringValuesToTry = new List<string> { "1", "3" };
+                    var valuesToTry = new List<int> { 1, 3 };
+
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                        .ForAdditionalValues(stringValuesToTry);
+
+                    sut.AcceptableValues.Should().BeEquivalentTo(valuesToTry);
+
+                    var compiled = sut.ToCompiledExpression();
+                    compiled.Invoke(ABusinessObjectWithAnIntOf1).Should().BeTrue();
+                    compiled.Invoke(ABusinessObjectWithAnIntOf2).Should().BeFalse();
+                    compiled.Invoke(ABusinessObjectWithAnIntOf3).Should().BeTrue();
+                }
+
+                [Fact]
+                public void ArrayOfStringInts_BecomesListOfAcceptableValues()
+                {
+                    var valuesToTry = new[] { 1, 3 };
+                    var stringValuesToTry = new[] { "1", "3" };
+
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt)
+                        .ForAdditionalValues(stringValuesToTry);
+                    sut.AcceptableValues.Should().BeEquivalentTo(valuesToTry);
+                }
+
+                [Fact]
+                public void ListOfStrings_BecomesListOfAcceptableStringValues()
+                {
+                    var valuesToTry = new[] { "One", "Three" };
+
+                    var sut = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AString)
+                        .ForAdditionalValues(valuesToTry);
+                    sut.AcceptableValues.Should().BeEquivalentTo(valuesToTry);
+
+                    var compiled = sut.ToCompiledExpression();
+
+                    compiled.Invoke(ABusinessObjectWithAStringOfOne).Should().BeTrue();
+                    compiled.Invoke(ABusinessObjectWithAStringOfTwo).Should().BeFalse();
+                    compiled.Invoke(ABusinessObjectWithAStringOfThree).Should().BeTrue();
+
+                }
+            }
+
             public class TPropertyTypeTests
             {
                 [Fact]

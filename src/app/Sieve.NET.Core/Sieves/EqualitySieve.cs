@@ -341,6 +341,16 @@ namespace Sieve.NET.Core.Sieves
             return this;
         }
 
+        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValues(IEnumerable<string> acceptableValues)
+        {
+            var acceptableValuesList = acceptableValues.ToList();
+
+            _potentiallyAcceptableValues.AddRange(acceptableValuesList.Where(x => !string.IsNullOrWhiteSpace(x)));
+
+            return this;
+
+        }
+
         public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValues(string listOfValues)
         {
             _potentiallyAcceptableValuesToParse.Add(listOfValues);
