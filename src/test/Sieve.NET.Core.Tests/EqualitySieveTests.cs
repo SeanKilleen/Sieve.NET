@@ -1,5 +1,4 @@
-﻿
-namespace Sieve.NET.Core.Tests
+﻿namespace Sieve.NET.Core.Tests
 {
     using System;
     using System.Collections.Generic;
