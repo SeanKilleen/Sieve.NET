@@ -30,6 +30,32 @@
         private static readonly ABusinessObject ABusinessObjectFor2014526 = new ABusinessObject { ADateTime = new DateTime(2014, 5, 26) };
         private static readonly ABusinessObject ABusinessObjectForTodaysDate = new ABusinessObject { ADateTime = DateTime.Now };
 
+        public class ComplexPropertyTests
+        {
+            [Fact]
+            public void ForProperty_WithComplexSubProperty_ThrowsArgumentException()
+            {
+                // Sieve expects a given property to be directly from the type the Sieve is for.
+                Action act = () => new EqualitySieve<ABusinessObject>().ForProperty(x => x.AComplexProperty.AnInt);
+
+                act.ShouldThrow<ArgumentException>()
+                    .And.Message.Should()
+                    .ContainEquivalentOf("refers to a property that is not from type");
+            }
+
+            [Fact]
+            public void DeclaringASieveForSubTypeAndPassingBusinessObject_Works()
+            {
+                var businessObj1 = new ABusinessObject { AComplexProperty =new ComplexProperty { AnInt = 1, AString = "Hello" }};
+                var businessObj2 = new ABusinessObject { AComplexProperty = new ComplexProperty { AnInt = 2, AString = "Hello" } };
+
+                var sieve = new EqualitySieve<ComplexProperty>().ForProperty(x => x.AnInt).ForValue(1).ToCompiledExpression();
+
+                sieve.Invoke(businessObj1.AComplexProperty).Should().BeTrue();
+                sieve.Invoke(businessObj2.AComplexProperty).Should().BeFalse();
+            }
+        }
+
         public class ToExpressionTests
         {
 
@@ -102,6 +128,8 @@
                     sut.PropertyToFilter.Name.Should().Be(PROPERTY_NAME);
 
                 }
+
+                
             }
         }
 

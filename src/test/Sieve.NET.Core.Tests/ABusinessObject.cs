@@ -13,5 +13,12 @@ namespace Sieve.NET.Core.Tests
         public string AString { get; set; }
         public DateTime ADateTime { get; set; }
         public DateTime? ANullableDateTime { get; set; }
+        public ComplexProperty AComplexProperty { get; set; }
+    }
+
+    public class ComplexProperty
+    {
+        public string AString { get; set; }
+        public int AnInt { get; set; }
     }
 }
