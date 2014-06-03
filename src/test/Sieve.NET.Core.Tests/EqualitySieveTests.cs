@@ -30,6 +30,19 @@
         private static readonly ABusinessObject ABusinessObjectFor2014526 = new ABusinessObject { ADateTime = new DateTime(2014, 5, 26) };
         private static readonly ABusinessObject ABusinessObjectForTodaysDate = new ABusinessObject { ADateTime = DateTime.Now };
 
+        public class AcceptableValuesTests
+        {
+            [Fact]
+            public void ReturnsEmptyListOfTPropertyTypeByDefault()
+            {
+                var expected = new List<int>();
+                var sieve = new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt);
+                
+                sieve.AcceptableValues.Should().NotBeNull();
+                sieve.AcceptableValues.ShouldBeEquivalentTo(expected);
+            }
+        }
+
         public class ComplexPropertyTests
         {
             [Fact]
