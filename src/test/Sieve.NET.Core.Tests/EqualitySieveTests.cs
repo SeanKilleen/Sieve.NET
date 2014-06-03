@@ -58,6 +58,17 @@
 
         public class ToExpressionTests
         {
+            [Fact]
+            public void WithoutPropertySet_ThrowsSievePropertyNotSetException()
+            {
+                var sieve = new EqualitySieve<ABusinessObject, int>().ForValue(1);
+
+                Action act = () => sieve.ToExpression();
+
+                act.ShouldThrow<SievePropertyNotSetException>()
+                    .And.Message.Should()
+                    .ContainEquivalentOf("try calling ForProperty");
+            }
 
             [Fact]
             public void SingleValue_MatchesOnlyThatValue()

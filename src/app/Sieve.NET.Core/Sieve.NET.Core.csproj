@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\InvalidSieveValueException.cs" />
+    <Compile Include="Exceptions\SievePropertyNotSetException.cs" />
     <Compile Include="Options\EmptyValuesListBehavior.cs" />
     <Compile Include="Options\InvalidValueBehavior.cs" />
     <Compile Include="Sieves\EqualitySieve.cs" />

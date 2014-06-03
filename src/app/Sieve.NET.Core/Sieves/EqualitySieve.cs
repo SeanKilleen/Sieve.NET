@@ -127,8 +127,14 @@ namespace Sieve.NET.Core.Sieves
         /// This is where the power of Sieve.NET lies. You can pass this expression into something
         /// like an OR/M that takes expressions and have it turn the expression into a SQL statement.</remarks>
         /// <exception cref="NoSieveValuesSuppliedException">When the empty values list behavior is set to throw an exception and no vaules have been supplied.</exception>
+        /// <exception cref="SievePropertyNotSetException">When ForProperty() hasn't been called yet.</exception>
         public Expression<Func<TTypeOfObjectToFilter, bool>> ToExpression()
         {
+            if (PropertyToFilter == null)
+            {
+                throw new SievePropertyNotSetException("the PropertyToFilter of the Sieve object isn't set. Try calling ForProperty() to ensure it's set.");
+            }
+
             var item = Expression.Parameter(typeof(TTypeOfObjectToFilter), "item");
             var property = Expression.PropertyOrField(item, this.PropertyToFilter.Name);
 
