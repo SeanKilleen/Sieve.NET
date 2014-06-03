@@ -61,7 +61,15 @@ namespace Sieve.NET.Core.Sieves
         /// <summary>
         /// The current list of separators in use.
         /// </summary>
-        public IEnumerable<string> Separators { get; private set; }
+        public IEnumerable<string> Separators
+        {
+            get
+            {
+                return this.GetSeparatorsOrDefault();
+            }
+        }
+
+        private IEnumerable<string> addedSeparators = new List<string>();
 
         // ReSharper disable once MemberCanBePrivate.Global -- this is public so users can reference it.
         /// <summary>
@@ -256,7 +264,7 @@ namespace Sieve.NET.Core.Sieves
         {
             if (!string.IsNullOrWhiteSpace(newSeparatorString))
             {
-                this.Separators = new List<string> { newSeparatorString };
+                this.addedSeparators = new List<string> { newSeparatorString };
             }
             return this;
         }
@@ -271,7 +279,7 @@ namespace Sieve.NET.Core.Sieves
         {
             if (separatorStrings != null && separatorStrings.Any())
             {
-                this.Separators = separatorStrings;
+                this.addedSeparators = separatorStrings;
             }
             return this;
         }
@@ -435,13 +443,13 @@ namespace Sieve.NET.Core.Sieves
 
         private IEnumerable<string> GetSeparatorsOrDefault()
         {
-            if (this.Separators == null || !this.Separators.Any())
+            if (this.addedSeparators == null || !this.addedSeparators.Any())
             {
-                this.Separators = this.DefaultSeparators;
+                return this.DefaultSeparators;
             }
 
             // ReSharper disable once PossibleMultipleEnumeration -- this is covered by tests
-            return Separators;
+            return addedSeparators;
         }
 
         private List<string> potentiallyAcceptableValues = new List<string>();
