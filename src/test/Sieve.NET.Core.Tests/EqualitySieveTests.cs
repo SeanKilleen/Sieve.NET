@@ -33,6 +33,17 @@
         public class AcceptableValuesTests
         {
             [Fact]
+            public void DoesntCountNullValues()
+            {
+
+                var sut = new EqualitySieve<ABusinessObject>()
+                    .ForProperty(x => x.AString)
+                    .ForValue(null)
+                    .ForAdditionalValue(null);
+                sut.AcceptableValues.Should().BeEmpty();
+            }
+
+            [Fact]
             public void ReturnsEmptyListOfTPropertyTypeByDefault()
             {
                 var expected = new List<int>();
