@@ -44,6 +44,7 @@
     <Compile Include="Exceptions\SievePropertyNotSetException.cs" />
     <Compile Include="Options\EmptyValuesListBehavior.cs" />
     <Compile Include="Options\InvalidValueBehavior.cs" />
+    <Compile Include="Sieves\BaseSieve.cs" />
     <Compile Include="Sieves\EqualitySieve.cs" />
     <Compile Include="Exceptions\NoSieveValuesSuppliedException.cs" />
     <Compile Include="PredicateBuilder.cs" />
