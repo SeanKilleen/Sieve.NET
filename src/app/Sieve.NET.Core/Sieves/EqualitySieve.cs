@@ -15,7 +15,7 @@ namespace Sieve.NET.Core.Sieves
     /// </summary>
     /// <typeparam name="TTypeOfObjectToFilter">The type of object you'd like to filter.</typeparam>
     /// <example>new EqualitySieve<MyBusinessObject>()</example>
-    public class EqualitySieve<TTypeOfObjectToFilter>
+    public class EqualitySieve<TTypeOfObjectToFilter> : ISieve<TTypeOfObjectToFilter>
     {
         /// <summary>
         /// This infers the property type and creates a Sieve specifically for that property type and name.
@@ -24,7 +24,7 @@ namespace Sieve.NET.Core.Sieves
         /// <param name="propertyExpression">An expression to help us get to a property.</param>
         /// <example>new EqualitySieve<ABusinessObject>().ForProperty(x=> x.AnInt)</example>
         /// <returns>A Sieve of <BusinessObject, PropertyType> (the latter is inferred from the expression.)</returns>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForProperty<TPropertyType>(
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> ForProperty<TPropertyType>(
             Expression<Func<TTypeOfObjectToFilter, TPropertyType>> propertyExpression)
         {
             return new EqualitySieve<TTypeOfObjectToFilter, TPropertyType>().ForProperty(propertyExpression);
@@ -37,7 +37,7 @@ namespace Sieve.NET.Core.Sieves
     /// </summary>
     /// <typeparam name="TTypeOfObjectToFilter">The business object to filter.</typeparam>
     /// <typeparam name="TPropertyType">The type of the property you're filtering on (e.g. int)</typeparam>
-    public class EqualitySieve<TTypeOfObjectToFilter, TPropertyType>
+    public class EqualitySieve<TTypeOfObjectToFilter, TPropertyType> : ISieve<TTypeOfObjectToFilter, TPropertyType>
     {
         /// <summary>
         /// The stored information about the property that the object will be filtered on.
@@ -89,7 +89,11 @@ namespace Sieve.NET.Core.Sieves
         /// The list of separators that Sieve.NET will use by default if the user has not called WithSeparators().
         /// </summary>
         /// <remarks>This is public so that users can reference it and it's not a black box.</remarks>
-        public readonly IEnumerable<string> DefaultSeparators = new List<string> { ",", "|" };
+        public IEnumerable<string> DefaultSeparators {
+            get
+            {
+              return  new List<string> { ",", "|" }; 
+            }} 
 
         /// <summary>
         /// Takes an item that is the same type as the property to filter against, and adds the item as an acceptable value.
@@ -100,7 +104,7 @@ namespace Sieve.NET.Core.Sieves
         /// This clears any acceptable values that may have already existed.
         /// To add additional values, use ForAdditionalValue().
         /// </remarks>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValue(TPropertyType acceptableValue)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> ForValue(TPropertyType acceptableValue)
         {
             this.ClearPotentialValuesLists();
             this.knownAcceptableValues = new List<TPropertyType> { acceptableValue };
@@ -118,7 +122,7 @@ namespace Sieve.NET.Core.Sieves
         /// <returns>The current sieve with an updated acceptable values list.</returns>
         /// <remarks>This clears any other acceptable values. You may want to use ForAdditionalValue() to add to the list.</remarks>
         /// <remarks>This assumes that your string can be converted to a property correctly. That responsibility is on the user.</remarks>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValue(string stringValue)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> ForValue(string stringValue)
         {
             this.ClearPotentialValuesLists();
             this.potentiallyAcceptableValues = new List<string> { stringValue };
@@ -210,7 +214,7 @@ namespace Sieve.NET.Core.Sieves
         /// <param name="acceptableValues">An enumerable of values that have the same type as the property we're filtering on.</param>
         /// <returns>An equality sieve with updated acceptable values.</returns>
         /// <remarks>This clears the previous acceptable values. To add to the list, use ForAdditionalValues().</remarks>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(IEnumerable<TPropertyType> acceptableValues)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> ForValues(IEnumerable<TPropertyType> acceptableValues)
         {
             ClearPotentialValuesLists();
             List<TPropertyType> acceptableValuesList = acceptableValues.ToList();
@@ -230,7 +234,7 @@ namespace Sieve.NET.Core.Sieves
         /// This assumes that any strings passed can be converted to the property type. That responsibility
         /// is on the user.
         /// </remarks>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(IEnumerable<string> acceptableValues)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> ForValues(IEnumerable<string> acceptableValues)
         {
             this.ClearPotentialValuesLists();
             var acceptableValuesList = acceptableValues.ToList();
@@ -247,7 +251,7 @@ namespace Sieve.NET.Core.Sieves
         /// <returns>An equality sieve with updated acceptable values.</returns>
         /// <remarks>This clears the previous acceptable values. To add to the list, use ForAdditionalValues().</remarks>
         /// <remarks> This assumes that any strings passed can be converted to the property type. That responsibility is on the user. </remarks>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForValues(string valuesListToParse)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> ForValues(string valuesListToParse)
         {
             this.ClearPotentialValuesLists();
             this.potentiallyAcceptableValuesToParse.Add(valuesListToParse);
@@ -260,7 +264,7 @@ namespace Sieve.NET.Core.Sieves
         /// </summary>
         /// <param name="newSeparatorString">The string to use as a separator.</param>
         /// <returns>An equality sieve set to use the given separator.</returns>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> WithSeparator(string newSeparatorString)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> WithSeparator(string newSeparatorString)
         {
             if (!string.IsNullOrWhiteSpace(newSeparatorString))
             {
@@ -275,7 +279,7 @@ namespace Sieve.NET.Core.Sieves
         /// <param name="separatorStrings">The strings to use as separators.</param>
         /// <returns>the current equality sieve set to use the given separators.</returns>
         /// <example>The sieve will use all specified separators. So, if "," and "|" are separated, "1,2|3" will become a list of 3 items -- 1, 2, and 3.</example>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> WithSeparators(IEnumerable<string> separatorStrings)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> WithSeparators(IEnumerable<string> separatorStrings)
         {
             if (separatorStrings != null && separatorStrings.Any())
             {
@@ -289,7 +293,7 @@ namespace Sieve.NET.Core.Sieves
         /// </summary>
         /// <param name="emptyValuesListBehavior">Describes the behavior (e.g. throw exception, let all objects through, etc.)</param>
         /// <returns>The current sieve, set to use the given Empty Values List behavior.</returns>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> WithEmptyValuesListBehavior(EmptyValuesListBehavior emptyValuesListBehavior)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> WithEmptyValuesListBehavior(EmptyValuesListBehavior emptyValuesListBehavior)
         {
             this.EmptyValuesListBehavior = emptyValuesListBehavior;
             return this;
@@ -300,7 +304,7 @@ namespace Sieve.NET.Core.Sieves
         /// </summary>
         /// <param name="invalidValueBehavior">Describes the behavior (e.g. throw exception, ignore, etc.)</param>
         /// <returns>The current sieve, set to use the given Empty Values List behavior.</returns>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> WithInvalidValueBehavior(InvalidValueBehavior invalidValueBehavior)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> WithInvalidValueBehavior(InvalidValueBehavior invalidValueBehavior)
         {
             InvalidValueBehavior = invalidValueBehavior;
 
@@ -312,7 +316,7 @@ namespace Sieve.NET.Core.Sieves
         /// </summary>
         /// <param name="additionalValue">An additional value of the same type as the property we're filtering on.</param>
         /// <returns>The current sieve with the additional acceptable value.</returns>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValue(TPropertyType additionalValue)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValue(TPropertyType additionalValue)
         {
             this.knownAcceptableValues.Add(additionalValue);
             return this;
@@ -325,7 +329,7 @@ namespace Sieve.NET.Core.Sieves
         /// An additional value that  can be converted to 
         /// the tye of the property we're filtering on.</param>
         /// <returns>The current sieve with the additional acceptable value.</returns>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValue(string additionalValue)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValue(string additionalValue)
         {
             this.potentiallyAcceptableValues.Add(additionalValue);
             return this;
@@ -336,7 +340,7 @@ namespace Sieve.NET.Core.Sieves
         /// </summary>
         /// <param name="listOfValues"> A list of values of the same type as the property we're filtering on. </param>
         /// <returns>The current sieve with the additional acceptable values.</returns>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValues(IEnumerable<TPropertyType> listOfValues)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValues(IEnumerable<TPropertyType> listOfValues)
         {
             this.knownAcceptableValues.AddRange(listOfValues);
             return this;
@@ -348,7 +352,7 @@ namespace Sieve.NET.Core.Sieves
         /// <param name="acceptableValues"> A list of values that can be converted to the same type as the property we're filtering on. </param>
         /// <returns>The current sieve with the additional acceptable values.</returns>
         /// <remarks>We expect the user to ensure that the values can actually be converted.</remarks>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValues(IEnumerable<string> acceptableValues)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValues(IEnumerable<string> acceptableValues)
         {
             var acceptableValuesList = acceptableValues.ToList();
 
@@ -367,7 +371,7 @@ namespace Sieve.NET.Core.Sieves
         /// </param>
         /// <returns>The current sieve with the additional acceptable values.</returns>
         /// <remarks>We expect the user to ensure that the values can actually be converted.</remarks>
-        public EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValues(string listOfValues)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> ForAdditionalValues(string listOfValues)
         {
             this.potentiallyAcceptableValuesToParse.Add(listOfValues);
             return this;
@@ -461,7 +465,7 @@ namespace Sieve.NET.Core.Sieves
         /// This is almost entirely possible due to the excellent answer on:
         /// http://stackoverflow.com/questions/671968/retrieving-property-name-from-lambda-expression
         /// </remarks>
-        internal EqualitySieve<TTypeOfObjectToFilter, TPropertyType> ForProperty(Expression<Func<TTypeOfObjectToFilter, TPropertyType>> propertyLambda)
+        public ISieve<TTypeOfObjectToFilter, TPropertyType> ForProperty(Expression<Func<TTypeOfObjectToFilter, TPropertyType>> propertyLambda)
         {
 
             var propInfo = ExtractPropertyInfoFromLambda(propertyLambda);
