@@ -11,10 +11,6 @@
         {
             return new EqualitySieve<ABusinessObject>().ForProperty(x => x.AnInt);
         }
-
-        public string CustomName = "";
-        public string PropertyName = "AnInt";
-
     }
 
     [Sieve("ADateTimeStart", "ADateTime")]
