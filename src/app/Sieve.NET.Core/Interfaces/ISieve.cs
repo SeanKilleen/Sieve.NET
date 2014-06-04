@@ -1,4 +1,4 @@
-namespace Sieve.NET.Core.Sieves
+namespace Sieve.NET.Core.Interfaces
 {
     using System;
     using System.Collections.Generic;

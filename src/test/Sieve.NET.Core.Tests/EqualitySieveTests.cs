@@ -10,6 +10,7 @@
     using FluentAssertions;
 
     using Sieve.NET.Core.Exceptions;
+    using Sieve.NET.Core.Interfaces;
     using Sieve.NET.Core.Options;
     using Sieve.NET.Core.Sieves;
 

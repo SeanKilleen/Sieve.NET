@@ -6,6 +6,7 @@ namespace Sieve.NET.Core.Sieves
     using System.Linq.Expressions;
 
     using Sieve.NET.Core.Exceptions;
+    using Sieve.NET.Core.Interfaces;
 
     /// <summary>
     ///     The entry point to create a new Sieve. This is really a gateway to Sieve<BusinessObject, PropertyType>

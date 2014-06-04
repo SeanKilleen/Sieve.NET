@@ -49,7 +49,7 @@
     <Compile Include="Exceptions\NoSieveValuesSuppliedException.cs" />
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sieves\ISieve.cs" />
+    <Compile Include="Interfaces\ISieve.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Sieve.Net.nuspec" />

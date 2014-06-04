@@ -9,6 +9,7 @@
     using System.Reflection;
 
     using Sieve.NET.Core.Exceptions;
+    using Sieve.NET.Core.Interfaces;
     using Sieve.NET.Core.Options;
 
     public class BaseSieve<TTypeOfObjectToFilter, TPropertyType> : ISieve<TTypeOfObjectToFilter, TPropertyType>
