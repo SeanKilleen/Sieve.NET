@@ -12,6 +12,10 @@ I am new to both expressions and open source, so this will be as much an experim
 
 **This is pre-alpha. Jump in and help us make it official!.**
 
+Jump in!
+====
+* Attempting to start a chat at http://chat.stackoverflow.com/rooms/55080/sieve-net so we can discuss things on a regular basis.
+
 What Problems are we Trying to Solve?
 ---
 Problem 1: Creating filters that can be expressions
