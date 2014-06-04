@@ -217,35 +217,6 @@ namespace Sieve.NET.Core.Sieves
            throw new NotImplementedException("The BaseSieve type does not implement ToExpression()");
         }
 
-        /// <summary>
-        /// This allows you to pass a Sieve directly into something that needs an expression, such as an OR/M.
-        /// It saves you having to call ToExpression() directly because it knows how to implicitly convert.
-        /// </summary>
-        /// <param name="sieve">any EqualitySieve</param>
-        /// <returns>The expression that would be returned by calling ToExpression() on the Sieve.</returns>
-        public static implicit operator Expression<Func<TTypeOfObjectToFilter, bool>>(
-           EqualitySieve<TTypeOfObjectToFilter, TPropertyType> sieve)
-        {
-            return sieve.ToExpression();
-        }
-
-        /// <summary>
-        /// This allows you to pass a Sieve directly into something that needs an Func, such as a class in your app.
-        /// It saves you having to call ToCompiledExpression() directly because it knows how to implicitly convert.
-        /// </summary>
-        /// <param name="sieve">any EqualitySieve</param>
-        /// <returns>The expression that would be returned by calling ToCompiledExpression() on the Sieve.</returns>
-        /// <remarks>
-        /// Remember, a Func is essentially a compiled expression. Any library that needs
-        /// to look inside the expression itself will need to use the expression, and not the func.
-        /// However, if all you care about is the true/false within your own app, you can use this more easily.
-        /// </remarks>
-        public static implicit operator Func<TTypeOfObjectToFilter, bool>(
-            EqualitySieve<TTypeOfObjectToFilter, TPropertyType> sieve)
-        {
-            return sieve.ToCompiledExpression();
-        }
-
         /// <returns>Returns the compiled version of the expression that the Sieve represents.</returns>
         /// <remarks>
         /// Remember, a Func is essentially a compiled expression. Any library that needs
