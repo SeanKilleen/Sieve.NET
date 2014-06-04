@@ -1,14 +1,9 @@
 namespace Sieve.NET.Core.Sieves
 {
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Diagnostics;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Reflection;
     using Sieve.NET.Core.Exceptions;
-    using Sieve.NET.Core.Options;
 
     /// <summary>
     /// The entry point to create a new Sieve. This is really a gateway to Sieve<BusinessObject, PropertyType>

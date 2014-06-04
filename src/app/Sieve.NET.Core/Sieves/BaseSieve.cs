@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sieve.NET.Core.Sieves
 {
@@ -10,7 +8,6 @@ namespace Sieve.NET.Core.Sieves
     using System.Diagnostics;
     using System.Linq.Expressions;
     using System.Reflection;
-
     using Sieve.NET.Core.Exceptions;
     using Sieve.NET.Core.Options;
 
@@ -19,7 +16,7 @@ namespace Sieve.NET.Core.Sieves
         /// <summary>
         /// The stored information about the property that the object will be filtered on.
         /// </summary>
-        public PropertyInfo PropertyToFilter { get; internal set; }
+        public PropertyInfo PropertyToFilter { get; private set; }
 
         /// <summary>
         /// Returns the list of acceptable values.
