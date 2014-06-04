@@ -40,8 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\SieveAttribute.cs" />
     <Compile Include="Exceptions\InvalidSieveValueException.cs" />
     <Compile Include="Exceptions\SievePropertyNotSetException.cs" />
+    <Compile Include="Interfaces\IFindableSieve.cs" />
     <Compile Include="Options\EmptyValuesListBehavior.cs" />
     <Compile Include="Options\InvalidValueBehavior.cs" />
     <Compile Include="Sieves\BaseSieve.cs" />
@@ -54,6 +56,7 @@
   <ItemGroup>
     <None Include="Sieve.Net.nuspec" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
