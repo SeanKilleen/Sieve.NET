@@ -1,19 +1,23 @@
 namespace Sieve.NET.Core.Sieves
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
+
     using Sieve.NET.Core.Exceptions;
 
     /// <summary>
-    /// The entry point to create a new Sieve. This is really a gateway to Sieve<BusinessObject, PropertyType>
+    ///     The entry point to create a new Sieve. This is really a gateway to Sieve<BusinessObject, PropertyType>
     /// </summary>
     /// <typeparam name="TTypeOfObjectToFilter">The type of object you'd like to filter.</typeparam>
     /// <example>new EqualitySieve<MyBusinessObject>()</example>
     public class EqualitySieve<TTypeOfObjectToFilter> : ISieve<TTypeOfObjectToFilter>
     {
+        #region Public Methods and Operators
+
         /// <summary>
-        /// This infers the property type and creates a Sieve specifically for that property type and name.
+        ///     This infers the property type and creates a Sieve specifically for that property type and name.
         /// </summary>
         /// <typeparam name="TPropertyType">The type of the property you're going to filter against.</typeparam>
         /// <param name="propertyExpression">An expression to help us get to a property.</param>
@@ -24,68 +28,82 @@ namespace Sieve.NET.Core.Sieves
         {
             return new EqualitySieve<TTypeOfObjectToFilter, TPropertyType>().ForProperty(propertyExpression);
         }
+
+        #endregion
     }
 
     /// <summary>
-    /// An equality Sieve with the property type hard-coded as a second type parameter.
-    /// This is the main class that performs the work of a Sieve.
+    ///     An equality Sieve with the property type hard-coded as a second type parameter.
+    ///     This is the main class that performs the work of a Sieve.
     /// </summary>
     /// <typeparam name="TTypeOfObjectToFilter">The business object to filter.</typeparam>
     /// <typeparam name="TPropertyType">The type of the property you're filtering on (e.g. int)</typeparam>
     public class EqualitySieve<TTypeOfObjectToFilter, TPropertyType> : BaseSieve<TTypeOfObjectToFilter, TPropertyType>
     {
+        #region Public Methods and Operators
+
+        /// <returns>Returns the compiled version of the expression that the Sieve represents.</returns>
+        /// <remarks>
+        ///     Remember, a Func is essentially a compiled expression. Any library that needs
+        ///     to look inside the expression itself will need to use the expression, and not the func.
+        ///     However, if all you care about is the true/false within your own app, you can use this more easily.
+        /// </remarks>
+        public override Func<TTypeOfObjectToFilter, bool> ToCompiledExpression()
+        {
+            return this.ToExpression().Compile();
+        }
 
         /// <summary>
-        /// This is the meat of what Sieve.NET can do. This method takes the sieve that has been defined and converts it to an 
-        /// equality expression in .NET. This allows it to be passed to anything and creates an expression 
-        /// that will evaluate to true if an object meets the Sieve's requirements.
+        ///     This is the meat of what Sieve.NET can do. This method takes the sieve that has been defined and converts it to an
+        ///     equality expression in .NET. This allows it to be passed to anything and creates an expression
+        ///     that will evaluate to true if an object meets the Sieve's requirements.
         /// </summary>
         /// <returns>An expression of a Func of the object to filter and a boolean.</returns>
         /// <remarks>
-        /// This is where the power of Sieve.NET lies. You can pass this expression into something
-        /// like an OR/M that takes expressions and have it turn the expression into a SQL statement.</remarks>
-        /// <exception cref="NoSieveValuesSuppliedException">When the empty values list behavior is set to throw an exception and no vaules have been supplied.</exception>
+        ///     This is where the power of Sieve.NET lies. You can pass this expression into something
+        ///     like an OR/M that takes expressions and have it turn the expression into a SQL statement.
+        /// </remarks>
+        /// <exception cref="NoSieveValuesSuppliedException">
+        ///     When the empty values list behavior is set to throw an exception and
+        ///     no vaules have been supplied.
+        /// </exception>
         /// <exception cref="SievePropertyNotSetException">When ForProperty() hasn't been called yet.</exception>
         public override Expression<Func<TTypeOfObjectToFilter, bool>> ToExpression()
         {
-            if (PropertyToFilter == null)
+            if (this.PropertyToFilter == null)
             {
-                throw new SievePropertyNotSetException("the PropertyToFilter of the Sieve object isn't set. Try calling ForProperty() to ensure it's set.");
+                throw new SievePropertyNotSetException(
+                    "the PropertyToFilter of the Sieve object isn't set. Try calling ForProperty() to ensure it's set.");
             }
 
-            var item = Expression.Parameter(typeof(TTypeOfObjectToFilter), "item");
-            var property = Expression.PropertyOrField(item, this.PropertyToFilter.Name);
+            ParameterExpression item = Expression.Parameter(typeof(TTypeOfObjectToFilter), "item");
+            MemberExpression property = Expression.PropertyOrField(item, this.PropertyToFilter.Name);
 
             if (this.AcceptableValues == null || !this.AcceptableValues.Any())
             {
-                return HandleEmptyAcceptableValuesList(item);
+                return this.HandleEmptyAcceptableValuesList(item);
             }
 
-            var acceptableConstants = this.AcceptableValues.Select(acceptableValueItem => Expression.Constant(acceptableValueItem, typeof(TPropertyType))).ToList();
+            List<ConstantExpression> acceptableConstants =
+                this.AcceptableValues.Select(
+                    acceptableValueItem => Expression.Constant(acceptableValueItem, typeof(TPropertyType))).ToList();
 
             // take each expression constant and put it into a binary expression of property == constant expression
-            var binaryExpressions = acceptableConstants.Select(constantExpressionItem => Expression.Equal(property, constantExpressionItem)).ToList();
+            List<BinaryExpression> binaryExpressions =
+                acceptableConstants.Select(constantExpressionItem => Expression.Equal(property, constantExpressionItem))
+                    .ToList();
 
             // for each binary expression, create a list of Expression lambdas 
-            var lambdas = binaryExpressions.Select(binExpression => Expression.Lambda<Func<TTypeOfObjectToFilter, bool>>(binExpression, item));
+            IEnumerable<Expression<Func<TTypeOfObjectToFilter, bool>>> lambdas =
+                binaryExpressions.Select(
+                    binExpression => Expression.Lambda<Func<TTypeOfObjectToFilter, bool>>(binExpression, item));
 
-            var expressionToReturn = PredicateBuilder.False<TTypeOfObjectToFilter>();
+            Expression<Func<TTypeOfObjectToFilter, bool>> expressionToReturn =
+                PredicateBuilder.False<TTypeOfObjectToFilter>();
 
             return lambdas.Aggregate(expressionToReturn, (current, lambdaItem) => current.Or(lambdaItem));
         }
 
-        /// <returns>Returns the compiled version of the expression that the Sieve represents.</returns>
-        /// <remarks>
-        /// Remember, a Func is essentially a compiled expression. Any library that needs
-        /// to look inside the expression itself will need to use the expression, and not the func.
-        /// However, if all you care about is the true/false within your own app, you can use this more easily.
-        /// </remarks>
-        public override Func<TTypeOfObjectToFilter, bool> ToCompiledExpression()
-        {
-            return ToExpression().Compile();
-        }
-   
-
-
+        #endregion
     }
 }
