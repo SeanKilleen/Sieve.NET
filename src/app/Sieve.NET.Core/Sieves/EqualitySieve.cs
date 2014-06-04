@@ -14,7 +14,6 @@ namespace Sieve.NET.Core.Sieves
     /// <example>new EqualitySieve<MyBusinessObject>()</example>
     public class EqualitySieve<TTypeOfObjectToFilter> : ISieve<TTypeOfObjectToFilter>
     {
-        #region Public Methods and Operators
 
         /// <summary>
         ///     This infers the property type and creates a Sieve specifically for that property type and name.
@@ -29,7 +28,6 @@ namespace Sieve.NET.Core.Sieves
             return new EqualitySieve<TTypeOfObjectToFilter, TPropertyType>().ForProperty(propertyExpression);
         }
 
-        #endregion
     }
 
     /// <summary>
@@ -40,7 +38,6 @@ namespace Sieve.NET.Core.Sieves
     /// <typeparam name="TPropertyType">The type of the property you're filtering on (e.g. int)</typeparam>
     public class EqualitySieve<TTypeOfObjectToFilter, TPropertyType> : BaseSieve<TTypeOfObjectToFilter, TPropertyType>
     {
-        #region Public Methods and Operators
 
         /// <returns>Returns the compiled version of the expression that the Sieve represents.</returns>
         /// <remarks>
@@ -104,6 +101,6 @@ namespace Sieve.NET.Core.Sieves
             return lambdas.Aggregate(expressionToReturn, (current, lambdaItem) => current.Or(lambdaItem));
         }
 
-        #endregion
+
     }
 }

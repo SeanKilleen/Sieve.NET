@@ -13,7 +13,6 @@
 
     public class BaseSieve<TTypeOfObjectToFilter, TPropertyType> : ISieve<TTypeOfObjectToFilter, TPropertyType>
     {
-        #region Fields
 
         private IEnumerable<string> addedSeparators = new List<string>();
 
@@ -23,9 +22,6 @@
 
         private List<string> potentiallyAcceptableValuesToParse = new List<string>();
 
-        #endregion
-
-        #region Public Properties
 
         /// <summary>
         ///     Returns the list of acceptable values.
@@ -86,9 +82,6 @@
             }
         }
 
-        #endregion
-
-        #region Public Methods and Operators
 
         /// <summary>
         ///     Adds an additional value to the acceptable values list.
@@ -350,9 +343,6 @@
             return this;
         }
 
-        #endregion
-
-        #region Methods
 
         internal Expression<Func<TTypeOfObjectToFilter, bool>> HandleEmptyAcceptableValuesList(
             ParameterExpression parameter)
@@ -513,6 +503,5 @@
             return result.Distinct().ToList();
         }
 
-        #endregion
     }
 }
