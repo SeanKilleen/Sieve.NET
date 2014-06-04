@@ -40,9 +40,55 @@ namespace Sieve.NET.Core.Sieves
     public class EqualitySieve<TTypeOfObjectToFilter, TPropertyType> : BaseSieve<TTypeOfObjectToFilter, TPropertyType>
     {
 
+        /// <summary>
+        /// This is the meat of what Sieve.NET can do. This method takes the sieve that has been defined and converts it to an 
+        /// equality expression in .NET. This allows it to be passed to anything and creates an expression 
+        /// that will evaluate to true if an object meets the Sieve's requirements.
+        /// </summary>
+        /// <returns>An expression of a Func of the object to filter and a boolean.</returns>
+        /// <remarks>
+        /// This is where the power of Sieve.NET lies. You can pass this expression into something
+        /// like an OR/M that takes expressions and have it turn the expression into a SQL statement.</remarks>
+        /// <exception cref="NoSieveValuesSuppliedException">When the empty values list behavior is set to throw an exception and no vaules have been supplied.</exception>
+        /// <exception cref="SievePropertyNotSetException">When ForProperty() hasn't been called yet.</exception>
+        public override Expression<Func<TTypeOfObjectToFilter, bool>> ToExpression()
+        {
+            if (PropertyToFilter == null)
+            {
+                throw new SievePropertyNotSetException("the PropertyToFilter of the Sieve object isn't set. Try calling ForProperty() to ensure it's set.");
+            }
 
+            var item = Expression.Parameter(typeof(TTypeOfObjectToFilter), "item");
+            var property = Expression.PropertyOrField(item, this.PropertyToFilter.Name);
 
+            if (this.AcceptableValues == null || !this.AcceptableValues.Any())
+            {
+                return HandleEmptyAcceptableValuesList(item);
+            }
 
+            var acceptableConstants = this.AcceptableValues.Select(acceptableValueItem => Expression.Constant(acceptableValueItem, typeof(TPropertyType))).ToList();
+
+            // take each expression constant and put it into a binary expression of property == constant expression
+            var binaryExpressions = acceptableConstants.Select(constantExpressionItem => Expression.Equal(property, constantExpressionItem)).ToList();
+
+            // for each binary expression, create a list of Expression lambdas 
+            var lambdas = binaryExpressions.Select(binExpression => Expression.Lambda<Func<TTypeOfObjectToFilter, bool>>(binExpression, item));
+
+            var expressionToReturn = PredicateBuilder.False<TTypeOfObjectToFilter>();
+
+            return lambdas.Aggregate(expressionToReturn, (current, lambdaItem) => current.Or(lambdaItem));
+        }
+
+        /// <returns>Returns the compiled version of the expression that the Sieve represents.</returns>
+        /// <remarks>
+        /// Remember, a Func is essentially a compiled expression. Any library that needs
+        /// to look inside the expression itself will need to use the expression, and not the func.
+        /// However, if all you care about is the true/false within your own app, you can use this more easily.
+        /// </remarks>
+        public override Func<TTypeOfObjectToFilter, bool> ToCompiledExpression()
+        {
+            return ToExpression().Compile();
+        }
    
 
 
