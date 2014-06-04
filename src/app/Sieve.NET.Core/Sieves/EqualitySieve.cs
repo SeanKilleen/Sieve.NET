@@ -14,7 +14,6 @@ namespace Sieve.NET.Core.Sieves
     /// <example>new EqualitySieve<MyBusinessObject>()</example>
     public class EqualitySieve<TTypeOfObjectToFilter> : ISieve<TTypeOfObjectToFilter>
     {
-
         /// <summary>
         ///     This infers the property type and creates a Sieve specifically for that property type and name.
         /// </summary>
@@ -100,7 +99,5 @@ namespace Sieve.NET.Core.Sieves
 
             return lambdas.Aggregate(expressionToReturn, (current, lambdaItem) => current.Or(lambdaItem));
         }
-
-
     }
 }
