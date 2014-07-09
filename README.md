@@ -73,4 +73,4 @@ Or, take the QueryString / NameValueCollection Itself and Parse it:
 
 Roadmap / Goals
 ===
-See the Issues section for this repo. I'll do my best to not let it stagnate.
+See the [Issues section for this repo](https://github.com/SeanKilleen/Sieve.NET/issues). I'll do my best to not let it stagnate.
