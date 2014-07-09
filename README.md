@@ -50,7 +50,7 @@ It's super annoying to do the following (pseudo-code):
     // If (FilterExists("Location"))
        // etc. etc.
 
-Instead, wouldn't it be cool to do something like:
+Instead, wouldn't it be great to be able to do something like:
 
 	[Sieve("MyUniqueFilterName", "LastName")]
     public class PersonLastNameFilter : IFindableSieve<Person>
