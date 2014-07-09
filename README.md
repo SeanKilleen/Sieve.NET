@@ -26,7 +26,7 @@ Okay, so here's the issue:
 * We need to be able to compile it, or use it as an expression (e.g. to feed it to an ORM so it can become a SQL query).
 * We often need to construct and apply a lot of filters at once
 
-So instead of creation an expression manually, or having to pick stuff out of a query string, we thought it would be nice to do something like:
+So instead of creating an expression manually, or having to pick stuff out of a query string, we thought it would be nice to do something like:
 
     new string valuesThatComeFromSomewhere = "killeen, smith, harris";
 
