@@ -28,6 +28,7 @@ Okay, so here's the issue:
 
 So instead of creating an expression manually, or having to pick stuff out of a query string, we thought it would be nice to do something like:
 
+```csharp
     new string valuesThatComeFromSomewhere = "killeen, smith, harris";
 
     // only 
@@ -36,7 +37,7 @@ So instead of creating an expression manually, or having to pick stuff out of a 
         .ForValues(valuesThatComeFromSomewhere)
         .WithSeparator(",")
         .EmptyValuesBehavior(EmpyValuesBehavior.LetAllObjectsThrough);
-
+```
 Problem 2 -- Filters as Findable Classes
 ---
 Say you have a search box that has 10 criteria and it passes those in via a query string, such as:
@@ -45,14 +46,16 @@ Say you have a search box that has 10 criteria and it passes those in via a quer
 
 It's super annoying to do the following (pseudo-code):
 
+```csharp
     // If (FilterExists("LastName"))
        // build a LastName filter
     // If (FilterExists("Location"))
        // etc. etc.
-
+```
 Instead, wouldn't it be great to be able to do something like:
 
-	[Sieve("MyUniqueFilterName", "LastName")]
+```csharp
+[Sieve("MyUniqueFilterName", "LastName")]
     public class PersonLastNameFilter : IFindableSieve<Person>
     { 
 		public Sieve<Person> GetSieve()
@@ -61,15 +64,19 @@ Instead, wouldn't it be great to be able to do something like:
 				.ForProperty(x => x.LastName);
 		}
     } 
-
+```
 And then find all the filters via:
 
-	new SieveLocator<Person>().GetFiltersForPropertyName("LastName");
+```csharp
+new SieveLocator<Person>().GetFiltersForPropertyName("LastName");
+```
 
 Or, take the QueryString / NameValueCollection Itself and Parse it:
 
-     var nvc = ConvertQueryStringToNameValueCollection(queryString);
+```csharp
+var nvc = ConvertQueryStringToNameValueCollection(queryString);
      var filters = newSieveLocator().GetSieves(nvc); // instances of all filters, ready to go.
+```
 
 Roadmap / Goals
 ===
